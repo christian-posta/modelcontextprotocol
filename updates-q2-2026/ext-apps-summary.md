@@ -4,7 +4,7 @@
 
 ## Overview
 
-`ext-apps` provides a framework for interactive UI applications that render inside MCP hosts (like Claude Desktop, GitHub Copilot, Postman). Instead of returning just text or static data, servers can return interactive HTML interfaces like data visualizations, complex forms, and rich dashboards directly in the chat interface.
+`ext-apps` provides a framework for interactive UI applications that render inside MCP hosts (like Claude, ChatGPT, VS Code, Postman). Instead of returning just text or static data, servers can return interactive HTML interfaces like data visualizations, complex forms, and rich dashboards directly in the chat interface.
 
 ## Key Advantages
 
@@ -15,12 +15,12 @@
 
 ## How It Works
 
-- A tool declares a UI resource in its description (`_meta.ui.resourceUri`). This URI points to a standard MCP resource hosted by the server.
+- A tool declares a UI resource via `_meta.ui.resourceUri` in its tool definition. This URI (using the `ui://` scheme) points to a standard MCP resource hosted by the server.
 - When an LLM calls that tool, the host fetches the UI resource (HTML, JS, CSS) from the server. **Crucially, this is typically a static Single-Page Application (SPA) bundle.**
 - The host renders the UI in a sandboxed `iframe`.
 - Concurrently, the host executes the actual tool call on the server and receives the JSON result.
 - **Dynamic Data Injection:** Instead of server-side rendering the HTML, the host pushes the JSON tool result directly into the running `iframe` via `postMessage`. The SPA then dynamically renders the data.
-- The App and host continue to communicate using an MCP dialect prefixed with `ui/` (e.g., `ui/initialize`) via `postMessage`, allowing the UI to trigger new tool calls and update without refreshing.
+- The App and host continue to communicate using JSON-RPC 2.0 over `postMessage` for iframe-host communication. Lifecycle messages use a `ui/` prefix (e.g., `ui/initialize`, `ui/notifications/initialized`), while tool calls and other MCP operations reuse the existing MCP protocol methods.
 
 ## Host Orchestration & Graceful Degradation
 
@@ -39,4 +39,4 @@ If an MCP server with App-enabled tools connects to a client that _doesn't_ supp
 
 - Developers can use any web framework (React, Vue, Svelte, Vanilla JS, etc.).
 - There is an `@modelcontextprotocol/ext-apps` App class wrapper, but it's not strictly required.
-- Current client support includes Claude, Claude Desktop, VS Code GitHub Copilot, Postman, and MCPJam.
+- Current client support includes ChatGPT, Claude, VS Code, Goose, Postman, and MCPJam.

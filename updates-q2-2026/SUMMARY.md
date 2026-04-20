@@ -34,7 +34,7 @@ Servers are now recommended (`SHOULD`) to return tools from `tools/list` in a **
 ### Schema Ergonomics
 
 - **Task TTL:** Updated the generated JSON schema to explicitly allow `ttl: null` for Tasks to signify unlimited execution time, fixing strict-validation failures.
-- **Sampling Definition (SEP-531):** Refined the sampling specification, strictly typing valid request and response fields for JSON-RPC messages.
+- **Sampling with Tools (SEP-1577):** Refined the sampling specification to support tool use within sampling requests. [NOTE: Originally referenced as "SEP-531" which does not exist; corrected to SEP-1577.]
 
 ## 2. Authorization & Security Enhancements
 
@@ -52,7 +52,7 @@ Added guidance for clients handling multi-AS behavior. It explicitly addresses h
 
 ### Client Application Types (SEP-837)
 
-Strengthened `application_type` definitions during OIDC registration flows. The spec now dictates how locally-hosted web applications (accessed via `localhost`) must be classified as `native`, whereas `web` is strictly reserved for remote browser-based applications.
+Strengthened `application_type` definitions during OIDC registration flows. The spec now dictates that locally-hosted web applications (accessed via `localhost`) **SHOULD** use `application_type: "native"`, whereas `"web"` is reserved for remote browser-based applications. Clients **MUST** specify an appropriate `application_type` during Dynamic Client Registration.
 
 ### Form-Mode Elicitation Scope
 
@@ -80,12 +80,12 @@ The following SEPs are currently open Pull Requests and may be considered for th
 ## Features & Capabilities
 
 - **SEP-2614: Add optional keywords field to Implementation for server routing** - Improves server routing and discovery by adding a keywords array to the Implementation metadata.
-- **SEP: Resource Submission** - Client-to-server resource creation to improve agent coordination.
+- **SEP-2571: Resource Submission** - Client-to-server resource creation to improve agent coordination.
 - **SEP-2564: Server-Side Filtering for List Methods** - Adds native filtering capabilities to `list` requests (e.g., `tools/list`, `resources/list`) to avoid transferring massive lists over the network.
 - **SEP-2557: Adapt Tasks for Stateless & Sessionless Protocol** - Adjustments to the Tasks primitive to operate safely in sessionless/stateless environments.
 - **SEP-2549: TTL for List Results** - Introduces Time-To-Live fields for list results to allow clients to better cache lists.
 - **SEP-2532: Resource Streaming for Binary Content Delivery** - Native streaming primitives for large binary resources (like images or large files).
-- **SEP: Event-Driven Tool Invocation** - Allows servers to push events that trigger LLM re-entry, turning tool invocation from purely client-driven to server-initiated.
+- **SEP-2495: Event-Driven Tool Invocation** - Allows servers to push events that trigger LLM re-entry, turning tool invocation from purely client-driven to server-initiated.
 - **SEP-2487: Add execution.requirements field to Tool** - Adds a field to explicitly define tool preconditions before a client attempts execution.
 - **SEP-2433: Transfer Descriptors** - Support for Out-of-Band Data Transfer Negotiation.
 - **SEP-2419: cache_hint well-known key** - Adds caching hints to `CallToolResult._meta` to improve LLM caching strategies.

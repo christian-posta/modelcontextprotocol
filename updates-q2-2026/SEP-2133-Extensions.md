@@ -1,5 +1,7 @@
 # Updates Q2 2026: Extension Framework (SEP-2133)
 
+https://modelcontextprotocol.io/seps/2133-extensions
+
 ## Overview
 
 SEP-2133 officially introduces an Extension Framework for the Model Context Protocol (MCP). It establishes a governance model, lifecycle, and presentation structure for extensions, allowing the MCP ecosystem to scale and experiment with new capabilities without forcing changes into the core protocol.
@@ -102,8 +104,8 @@ By modularizing MCP, developers can start standardizing advanced functionality l
 
 ## Roadmap & Future Extensions
 
-Following the successful release of `ext-auth` and `ext-apps`, the MCP Development Roadmap highlights several immediate next steps for the extension ecosystem:
+Following the successful release of `ext-auth` and `ext-apps`, several related ecosystem efforts are underway:
 
-1. **Enterprise Working Group (WG) Outputs:** An Enterprise WG is being formed, and much of its output (such as strict policy controls, audit logging, or VPC networking) is expected to land as specialized Extensions rather than core specification changes.
-2. **The "Skills" Primitive:** Core maintainers are investigating a new "Skills" primitive. This extension would likely provide a way to compose multiple capabilities (e.g., bundling specific tools, resources, and UI elements together into a single cohesive "Skill") that an LLM can adopt seamlessly.
-3. **First-Class Registry Support:** There are plans to add extension support to the official MCP module registry. This will allow developers to filter, search, and discover servers based on the specific capabilities (like `"io.modelcontextprotocol/ui"`) they support.
+1. **Skills Over MCP Interest Group:** A "Skills Over MCP" Interest Group has been chartered (PR #2568, merged) to explore composing multiple capabilities into reusable bundles. A prior SEP proposing "Agent Skills as a First-Class MCP Primitive" (PR #2076) was closed, but community interest continues through this IG.
+2. **Registry Working Group:** A Registry WG charter is currently in progress (PR #2587, open), which would provide infrastructure for discovering servers and extensions based on their capabilities.
+3. **Enterprise Auth Extensions:** Enterprise-focused work is already landing via `ext-auth` (enterprise-managed authorization, OAuth client credentials). Additional enterprise governance (audit logging, policy controls) may emerge as further extensions, though no dedicated Enterprise WG has been formally chartered.

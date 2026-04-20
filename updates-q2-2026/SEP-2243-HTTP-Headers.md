@@ -1,0 +1,161 @@
+# Updates Q2 2026: HTTP Transport Standardization (SEP-2243)
+
+## Overview
+
+SEP-2243 standardizes how routing and context information is exposed over the Streamable HTTP transport. Historically, all routing information (like tool names, methods, or region tags) was buried deep within the JSON-RPC payload. This meant network intermediaries like load balancers, API gateways, and WAFs had to terminate TLS and perform deep packet inspection to route traffic.
+
+This SEP resolves that friction by mirroring critical fields from the JSON payload directly into standard HTTP headers.
+
+## Key Changes Introduced by SEP-2243
+
+### 1. Required Standard Headers
+
+All Streamable HTTP `POST` requests (for both requests and notifications) must now extract specific JSON-RPC fields and append them as headers:
+
+- **`Mcp-Method`**: Mirrors the JSON-RPC `method` field.
+- **`Mcp-Name`**: Mirrors `params.name` or `params.uri` (Required for `tools/call`, `resources/read`, and `prompts/get`).
+
+#### Concrete Example: Standard Headers
+
+If the client wants to execute the `get_weather` tool, it generates this JSON-RPC body:
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "tools/call",
+  "params": {
+    "name": "get_weather",
+    "arguments": { "city": "Seattle" }
+  }
+}
+```
+
+The resulting HTTP request MUST now look like this:
+
+```http
+POST /mcp HTTP/1.1
+Host: api.example.com
+Content-Type: application/json
+Mcp-Method: tools/call
+Mcp-Name: get_weather
+
+{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"get_weather","arguments":{"city":"Seattle"}}}
+```
+
+---
+
+### 2. Custom Tool Parameter Headers (`x-mcp-header`)
+
+Servers can now instruct clients to extract specific tool parameter values and place them into HTTP headers. This is done by adding the `x-mcp-header` extension property to a parameter's definition within the tool's JSON `inputSchema`.
+
+- **Format:** The `x-mcp-header` property defines the suffix for the header. The client MUST prefix this value with `Mcp-Param-`. (e.g., if the schema defines `"x-mcp-header": "Region"`, the generated header becomes `Mcp-Param-Region`).
+- **Use Case:** Allows load balancers to route a `tools/call` request to a specific geographic region or tenant cluster based solely on the HTTP header.
+- **Constraints:** This property can _only_ be applied to primitive types (number, string, boolean). If a server applies it to a complex object or array, the client MUST reject that tool during the `tools/list` initialization.
+
+#### Concrete Example: Custom `x-mcp-header`
+
+**Server Tool Definition:**
+
+```json
+{
+  "name": "deploy_server",
+  "description": "Deploys a new instance in the target region",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "region": {
+        "type": "string",
+        "description": "The deployment region",
+        "x-mcp-header": "Region"
+      },
+      "instance_type": {
+        "type": "string",
+        "description": "EC2 Instance Size"
+      }
+    },
+    "required": ["region", "instance_type"]
+  }
+}
+```
+
+**Client HTTP Request:**
+Notice how the LLM generates arguments for _both_ `region` and `instance_type`, but the client _only_ turns `region` into an HTTP header because it was specifically tagged with `"x-mcp-header": "Region"` in the schema.
+
+```http
+POST /mcp HTTP/1.1
+Host: api.example.com
+Content-Type: application/json
+Mcp-Method: tools/call
+Mcp-Name: deploy_server
+Mcp-Param-Region: us-east-1
+
+{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"deploy_server","arguments":{"region":"us-east-1", "instance_type": "t3.large"}}}
+```
+
+---
+
+### 3. Strict Validation & Security
+
+Because headers and the JSON body could potentially mismatch (leading to routing spoofing attacks), the SEP introduces strict validation rules. Any server processing the message body **MUST** validate that the HTTP header values exactly match the corresponding values in the JSON-RPC body.
+
+#### Concrete Example: Header Mismatch Attack
+
+A malicious user tries to bypass a firewall by putting a safe region in the header (`us-east-1`), but asking the internal server to execute in a restricted region (`us-secret-1`) in the JSON body:
+
+**Malicious HTTP Request:**
+
+```http
+POST /mcp HTTP/1.1
+Mcp-Method: tools/call
+Mcp-Name: deploy_server
+Mcp-Param-Region: us-east-1
+
+{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"deploy_server","arguments":{"region":"us-secret-1"}}}
+```
+
+**Server HTTP Response (Rejected):**
+
+```http
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "error": {
+    "code": -32001,
+    "message": "HeaderMismatch: HTTP headers do not match request body parameters"
+  }
+}
+```
+
+---
+
+### 4. Value Encoding Rules
+
+To prevent header injection attacks (like injecting `\r\n` characters to add fake headers), clients must safely encode parameter values before placing them in HTTP headers:
+
+- **Standard Types:** Booleans, integers, and standard ASCII strings are passed as-is (e.g., `Mcp-Param-Count: 42`).
+- **Base64 Encoding:** If a value contains non-ASCII characters, newlines, carriage returns, or leading/trailing whitespace, the client **MUST** encode it using a specific Base64 format: `=?base64?{encoded_value}?=`.
+
+#### Concrete Example: Base64 Encoding
+
+Imagine a tool that takes a `message` parameter marked with `x-mcp-header: true`. The user inputs a message with a newline: `"Line1\nLine2"`.
+
+**Client HTTP Request:**
+
+```http
+POST /mcp HTTP/1.1
+Mcp-Method: tools/call
+Mcp-Name: send_alert
+Mcp-Param-Message: =?base64?TGluZTEKTGluZTI=?=
+
+{"jsonrpc":"2.0","id":4,"method":"tools/call","params":{"name":"send_alert","arguments":{"message":"Line1\nLine2"}}}
+```
+
+_(Note: `TGluZTEKTGluZTI=` is the base64 encoding of `"Line1\nLine2"`)_
+
+## Why this matters
+
+This standardization is crucial for enterprise deployments. By lifting routing data out of the JSON body and into HTTP headers, standard network infrastructure can now natively route, rate-limit, and monitor MCP traffic using existing, highly optimized tooling without needing to parse complex JSON payloads on every request.
