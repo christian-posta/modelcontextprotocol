@@ -1,0 +1,3253 @@
+commit 055edf5af106fbe212512363c95865ec0f48474a
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Fri Apr 17 08:15:43 2026 +0100
+
+    Clarify single Core Maintainer approval for WG charter PR
+    
+    Previously read as ambiguous between a single Core Maintainer approval
+    and a Core Maintainer vote. Charter PR approval requires only a single
+    Core Maintainer, who should notify all Core Maintainers.
+
+M	seps/2149-working-group-charter-template.md
+
+commit 4c6fc0af1a1b9f48b33aa8a3fac559d16997c41e
+Author: Den Delimarsky <den@anthropic.com>
+Date:   Fri Apr 17 02:09:00 2026 +0000
+
+    Polish: drop section-name list, fix TEMPLATE.md PR URL, sync README
+    
+    - Phase 4: replace 12-name Required/Optional enumeration with a
+      structural pointer to TEMPLATE.md's '---' rule (last residual of
+      the 'read from TEMPLATE.md, don't repeat' review note)
+    - Phase 4 PR bullet: state-agnostic wording; fix the stale repo URL
+      in seps/TEMPLATE.md itself rather than documenting around it
+    - Prerequisite: add 'git fetch origin' so research phases see current
+      SEPs/schema/MAINTAINERS.md
+    - Phase 6 closing: condition 'find a sponsor' on Q5 == None
+    - README: mention format:docs alongside generate:seps
+    
+    :house: Remote-Dev: homespace
+
+M	seps/TEMPLATE.md
+
+commit 4a04d4c3ca0ad36c11a69ed474415eacbd502ac0
+Author: Den Delimarsky <53200638+localden@users.noreply.github.com>
+Date:   Wed Apr 15 18:09:14 2026 -0700
+
+    docs(spec): restore tool-name disambiguation note dropped in #2243 (#2584)
+    
+    The Note under "Tool Names" explaining that uniqueness is per-server,
+    that aggregating clients SHOULD prefix to disambiguate, and that
+    serverInfo.name is not a reliable disambiguation key, was accidentally
+    overwritten when #2243 inserted the x-mcp-header section. This restores
+    the Note verbatim from 828bd471 in its original position.
+    
+    :house: Remote-Dev: homespace
+
+M	docs/specification/draft/server/tools.mdx
+
+commit b51b39da764f148ad13b4bb27be6e51f2a8b209d
+Author: Mike Kistler <mikekistler@microsoft.com>
+Date:   Wed Apr 15 13:51:30 2026 -0500
+
+    SEP-2243 HTTP Standardization (#2243)
+    
+    * Convert proposal from Google Doc to markdown doc in seps folder
+    
+    * Fix markdownlint and cspell issues
+    
+    * Add literal examples
+    
+    * Add rationale for location of custom header metadata
+    
+    * Define value encoding rules
+    
+    * Add section on Edge Cases & Conformance Tests
+    
+    * Clarify requirement on clients to support custom headers
+    
+    * Define JSON RPC error code for header mismatch errors
+    
+    * Add clear error handling for missing custom headers
+    
+    * Added tradeoffs on passing metadata in headers vs path
+    
+    * Added section on options for header number/size limits
+    
+    * Address PR review comments
+    
+    * Apply suggestion from @mikekistler
+    
+    * Collapse Mcp-Tool-Name, Mcp-Resource, Mcp-Prompt-Name into Mcp-Name
+    
+    * Specify Base64 encoding is of UTF-8 representation
+    
+    * Add rationale for encoding approach with alternatives evaluation
+    
+    * Drop caching as advantage of path-based routing
+    
+    * Clarify client behavior for setting standard and custom headers
+    
+    * Allow intermediaries to reject invalid requests without JSON-RPC error response
+    
+    * Add security guidance for trusting header values
+    
+    * Add rationale for scoping x-mcp-header to tools only
+    
+    * Remove limit on header value size
+    
+    * Rename sep file to match PR number
+    
+    * Fix render-seps check
+    
+    * Fix format check
+    
+    * First draft of spec updates for SEP #2243
+    
+    * Add changelog entry for SEP 2243
+    
+    * Clarify that Mcp-Method header is required for notifications and add notification example
+    
+    * Address PR review comments.
+    
+    Co-authored-by: Mike Kistler <mikekistler@microsoft.com>
+    
+    * Apply suggestion from @mikekistler
+    
+    * Fix Render SEPs and Prettier PR checks
+
+M	docs/specification/draft/basic/transports.mdx
+M	docs/specification/draft/changelog.mdx
+M	docs/specification/draft/server/tools.mdx
+A	seps/2243-http-standardization.md
+
+commit 91e1f9e81b7a1ed16421c441337c71e24854d09a
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Mon Apr 13 19:54:51 2026 +0100
+
+    spec: add changelog entry for deterministic tools/list ordering
+
+M	docs/specification/draft/changelog.mdx
+
+commit 381f03ff7b9522b09cd7975d883794963dd3df70
+Author: Den Delimarsky <53200638+localden@users.noreply.github.com>
+Date:   Wed Apr 8 17:16:49 2026 -0700
+
+    docs: move versioning page from specification/ to docs/learn/ (#2544)
+    
+    The versioning meta-document was located at specification/versioning.mdx
+    but navigated from the Documentation tab's 'About MCP' group alongside
+    docs/learn/ pages. Because the file path was under specification/, it
+    inherited the spec version banner — which doesn't make sense for a page
+    that explains how versioning works rather than being versioned content.
+    
+    Moved to docs/learn/versioning.mdx alongside its nav siblings. Same TOC
+    position. Added a redirect for the old URL.
+    
+    :house: Remote-Dev: homespace
+
+D	docs/specification/versioning.mdx
+
+commit 7390b6d63ae0e5f565f735309b4ae5c6f2473ce1
+Author: Claude <noreply@anthropic.com>
+Date:   Sat Apr 4 02:36:06 2026 +0000
+
+    spec: tools/list SHOULD return tools in deterministic order
+    
+    Deterministic ordering enables clients to reliably cache the tool list
+    and improves LLM prompt cache hit rates when tools are included in
+    model context.
+    
+    https://claude.ai/code/session_01H7kpkCRQzoCrWm5YEpCXL4
+
+M	docs/specification/draft/server/tools.mdx
+
+commit 5c25208be86db5033f644a4e0d005e08f699ef3d
+Author: Felix Weinberger <fweinberger@anthropic.com>
+Date:   Tue Mar 31 16:22:42 2026 +0000
+
+    schema: use JSONObject for extensions capability values
+    
+    The extensions field in ClientCapabilities/ServerCapabilities used bare
+    `object` as the value type, while the sibling experimental field (same
+    semantic concept — open-ended vendor-prefixed config) uses JSONObject.
+    This was the only use of bare `object` in the entire schema file.
+    
+    Over the wire the two validate identical JSON — both mean 'any object'.
+    The difference is TypeScript ergonomics: JSONObject catches accidental
+    Date/Map/function values at compile time. Normal extension config
+    interfaces (including optional fields under exactOptionalPropertyTypes)
+    remain assignable.
+    
+    Ref: SEP-2133
+
+M	docs/specification/draft/schema.mdx
+M	schema/draft/schema.json
+M	schema/draft/schema.ts
+
+commit 9c021b306c300fe1a58f779dd41613e02d955ad4
+Author: Wils Dawson <wils@arcade.dev>
+Date:   Sat Mar 28 22:15:08 2026 -0700
+
+    SEP-2207: OIDC-flavored refresh token guidance (#2207)
+    
+    * feat: Add draft SEP for refresh tokens
+    
+    * feat: Update auth specification draft adding refresh token clarity
+    
+    * fix formatting
+    
+    * fix: Update with PR number
+    
+    * Address Nate's feedback
+    
+    * fix: update sponsor
+    
+    * generate sep doc
+    
+    * fix: Incorporate feedback
+    
+    * fix: address feedback from Den
+    
+    * remove AS guidance
+    
+    * move to in-review
+    
+    * accepted SEP
+
+M	docs/specification/draft/basic/authorization.mdx
+A	seps/2207-oidc-refresh-token-guidance.md
+
+commit 443f75d9909618971d4217024ae094a648624de8
+Author: Den Delimarsky <hi@den.dev>
+Date:   Fri Mar 27 18:45:15 2026 -0700
+
+    SEP-2350: Clarify client-side scope accumulation in step-up authorization (#2350)
+    
+    * docs: clarify client-side scope accumulation in step-up authorization
+    
+    Align server scope management with RFC 6750 Section 3.1 so servers
+    report scopes needed for the current operation rather than including
+    previously granted client scopes. Add explicit client-side scope
+    accumulation guidance to the step-up authorization flow and clarify
+    the meaning of "authoritative" in protected resource metadata
+    discovery requirements.
+    
+    Fixes #2349
+    
+    * docs: add hierarchical scope note to step-up authorization flow
+    
+    Clarifies that when authorization servers use hierarchical scopes (where
+    a broad scope implies narrower ones), clients computing scope unions may
+    produce semantically redundant sets. Clients don't need to deduplicate
+    these — the authorization server normalizes during token issuance.
+    
+    Also notes that hierarchy awareness IS needed server-side for the 403
+    gating decision (is this token sufficient?), but not for determining
+    what scopes to emit in the challenge — the server still emits the
+    minimal required scope per RFC 6750 3.1.
+    
+    Addresses feedback from @SamMorrowDrums re: GitHub's rolled-up scope
+    model, where a tool requiring repo:read must accept a token carrying
+    only repo:admin.
+    
+    :house: Remote-Dev: homespace
+    
+    * Add guidance against incremental scope challenging within a single operation
+    
+    :house: Remote-Dev: homespace
+    
+    ---------
+    
+    Co-authored-by: Den Delimarsky <den@anthropic.com>
+    Co-authored-by: Den Delimarsky <53200638+localden@users.noreply.github.com>
+
+M	docs/specification/draft/basic/authorization.mdx
+
+commit 298498d3f102426ac8e728818a59857da7c3623c
+Author: Den Delimarsky <hi@den.dev>
+Date:   Fri Mar 27 18:43:45 2026 -0700
+
+    docs: explicitly specify RFC 8414 well-known URI suffix for MCP (#2351)
+    
+    Clarify that MCP uses the default oauth-authorization-server
+    well-known URI suffix per RFC 8414 Section 3.1, satisfying the
+    RFC requirement that applications specify their well-known URI
+    suffix. MCP does not define an application-specific suffix.
+    
+    Fixes #1650
+
+M	docs/specification/draft/basic/authorization.mdx
+
+commit 4e578591e53760f5d9fe20f6d3453b30ee8b2ecd
+Author: Den Delimarsky <hi@den.dev>
+Date:   Fri Mar 27 18:42:26 2026 -0700
+
+    SEP-2352: Clarify authorization server binding and migration (#2352)
+    
+    * docs: clarify authorization server binding and multi-AS behavior
+    
+    Add guidance for clients on binding persisted client credentials to
+    specific authorization servers and handling AS changes. Clarifies
+    multi-AS behavior when multiple servers are listed in
+    authorization_servers.
+    
+    Closes #1349
+    
+    Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
+    
+    * Update docs/specification/draft/basic/authorization.mdx
+    
+    Co-authored-by: Kaixuan Luo <30545735+KevinLuo2000@users.noreply.github.com>
+    
+    * Update docs/specification/draft/basic/authorization.mdx
+    
+    Co-authored-by: Kaixuan Luo <30545735+KevinLuo2000@users.noreply.github.com>
+    
+    * Trigger CI
+    
+    Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
+    
+    * Update docs/specification/draft/basic/authorization.mdx
+    
+    Co-authored-by: Max Gerber <89937743+max-stytch@users.noreply.github.com>
+    
+    * Update docs/specification/draft/basic/authorization.mdx
+    
+    Co-authored-by: Wils Dawson <wils.dawson@gmail.com>
+    
+    * Update docs/specification/draft/basic/authorization.mdx
+    
+    Co-authored-by: Wils Dawson <wils.dawson@gmail.com>
+    
+    * Update docs/specification/draft/basic/authorization.mdx
+    
+    Co-authored-by: Wils Dawson <wils.dawson@gmail.com>
+    
+    * Update docs/specification/draft/basic/authorization.mdx
+    
+    Co-authored-by: Nate Barbettini <nate@arcade.dev>
+    
+    * Reorder AS binding paragraphs: non-portable cases before CIMD
+    
+    :house: Remote-Dev: homespace
+    
+    * Ground multi-AS credential isolation in RFC 6749 Section 2.2
+    
+    Reframes the paragraph to cite RFC 6749 Section 2.2 as the source of
+    the client-identifier-per-AS semantics, rather than appearing to
+    introduce a new requirement. Drops the redundant middle sentence and
+    tightens the normative language.
+    
+    :house: Remote-Dev: homespace
+    
+    ---------
+    
+    Co-authored-by: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
+    Co-authored-by: Den Delimarsky <53200638+localden@users.noreply.github.com>
+    Co-authored-by: Kaixuan Luo <30545735+KevinLuo2000@users.noreply.github.com>
+    Co-authored-by: Max Gerber <89937743+max-stytch@users.noreply.github.com>
+    Co-authored-by: Wils Dawson <wils.dawson@gmail.com>
+    Co-authored-by: Nate Barbettini <nate@arcade.dev>
+    Co-authored-by: Den Delimarsky <den@anthropic.com>
+
+M	docs/specification/draft/basic/authorization.mdx
+
+commit 7ce158525afb956503e149bc5009beb21fbaf7c1
+Author: Den Delimarsky <53200638+localden@users.noreply.github.com>
+Date:   Fri Mar 27 18:32:29 2026 -0700
+
+    SEP-837: Update authorization spec to clarify client type requirements (#837)
+    
+    * Update authorization.mdx
+    
+    * Update authorization.mdx
+    
+    * Update docs/specification/draft/basic/authorization.mdx
+    
+    Co-authored-by: Nate Barbettini <nathanaelb@gmail.com>
+    
+    * Apply suggestion from @nbarbettini
+    
+    Co-authored-by: Nate Barbettini <nathanaelb@gmail.com>
+    
+    * Update authorization.mdx
+    
+    * Update docs/specification/draft/basic/authorization.mdx
+    
+    Co-authored-by: Stephen Halter <halter73@gmail.com>
+    
+    * docs: address review feedback on application_type guidance
+    
+    Clarify that locally-hosted web applications accessed via localhost
+    should use application_type "native", and that "web" applies only
+    to remote browser-based applications. Expand registration failure
+    handling guidance with concrete actions for client developers.
+    
+    * Update docs/specification/draft/basic/authorization.mdx
+    
+    Co-authored-by: Wils Dawson <wils.dawson@gmail.com>
+    
+    * Strengthen application_type requirement to MUST per review feedback
+    
+    Per wdawson's feedback: omitting application_type defaults to 'web'
+    under OIDC, yet many clients use native-style redirect URIs, forcing
+    authorization servers to relax security constraints. Since non-OIDC
+    servers safely ignore unknown parameters, there is no downside to
+    requiring this unconditionally.
+    
+    :house: Remote-Dev: homespace
+    
+    * Fix prettier formatting in SEP docs
+    
+    :house: Remote-Dev: homespace
+    
+    ---------
+    
+    Co-authored-by: Nate Barbettini <nathanaelb@gmail.com>
+    Co-authored-by: Den Delimarsky <hi@den.dev>
+    Co-authored-by: Stephen Halter <halter73@gmail.com>
+    Co-authored-by: Den Delimarsky <1389609+dend@users.noreply.github.com>
+    Co-authored-by: Wils Dawson <wils.dawson@gmail.com>
+
+M	docs/specification/draft/basic/authorization.mdx
+
+commit 5771239af2343e3fbc6d4682382caf6693b2254c
+Author: Den Delimarsky <53200638+localden@users.noreply.github.com>
+Date:   Tue Mar 17 15:40:33 2026 -0700
+
+    Update docs/specification/draft/basic/utilities/ping.mdx
+    
+    Co-authored-by: Jonathan Hefner <jonathan@hefner.pro>
+
+M	docs/specification/draft/basic/utilities/ping.mdx
+
+commit 78bef9b497cef0fded07d5cff62883d89150abc1
+Author: evalstate <1936278+evalstate@users.noreply.github.com>
+Date:   Sat Mar 14 17:53:58 2026 +0000
+
+    Reword ping guidance to make clear use not implementation is optional
+
+M	docs/specification/draft/basic/utilities/ping.mdx
+
+commit 44440cb28164fdbc36f5a707c0ab84e4c4ac9464
+Author: Den Delimarsky <den@anthropic.com>
+Date:   Wed Mar 25 23:35:39 2026 +0000
+
+    Keep user-controlled term for taxonomy consistency
+    
+    Per review feedback: the -controlled suffix is used consistently across
+    the server primitive taxonomy (User-controlled, Application-controlled,
+    Model-controlled) in server/index.mdx and many other locations. Changing
+    only prompts breaks that consistency.
+    
+    Reverted to user-controlled and kept the clarifying sentence, which is
+    the actual fix for the issue's concern about content provenance. The
+    server-concepts.mdx guide changes are dropped since they were purely
+    the term swap.
+    
+    :house: Remote-Dev: homespace
+
+M	docs/specification/draft/server/prompts.mdx
+
+commit 828bd47180aa67104a5f00fddfd0fb4ac1433f17
+Author: Den Delimarsky <den@anthropic.com>
+Date:   Wed Mar 25 20:48:51 2026 +0000
+
+    docs: remove legacy/concepts, salvage content into draft spec
+    
+    Deletes all 8 legacy/concepts pages and the now-empty legacy/ directory.
+    Adds redirects from /legacy/concepts/* to /specification/latest/* so
+    inbound links resolve to the current spec.
+    
+    Before deletion, a content diff against the draft spec found 4 items
+    worth preserving:
+    
+    specification/draft/server/resources.mdx:
+    - Servers MAY return multiple contents per resources/read (directory
+      listing use case)
+    - resources/unsubscribe JSON example + SHOULD guidance (spec had
+      subscribe and update-notification but no unsubscribe example)
+    - Unsubscribe arrows added to the Message Flow mermaid diagram
+    - Directory traversal sanitization MUST for file:// resources appended
+      to Security Considerations
+    
+    specification/draft/server/tools.mdx:
+    - Note on tool name collisions across servers: uniqueness is per-server,
+      aggregating clients SHOULD prefix for disambiguation, server name from
+      initialization is not guaranteed unique
+    
+    The other 6 legacy pages (architecture, elicitation, prompts, roots,
+    sampling, transports) had zero salvageable content; everything was
+    already covered in the spec or outdated.
+    
+    :house: Remote-Dev: homespace
+
+M	docs/specification/draft/server/resources.mdx
+M	docs/specification/draft/server/tools.mdx
+
+commit 4f4e951ef4b48d0d058044542d5ce934a4eea168
+Author: Den Delimarsky <den@anthropic.com>
+Date:   Wed Mar 25 20:28:47 2026 +0000
+
+    spec: link lifecycle page to architecture guide
+    
+    The lifecycle spec page shows the sequence diagram and JSON-RPC wire
+    format but does not point readers to SDK-level examples. Added an Info
+    callout after the diagram linking to the Architecture guide, which
+    already walks through the initialization sequence with pseudo-code.
+    
+    The guide already links to the spec; this adds the reverse link so
+    readers starting from the spec can find the code-level view.
+    
+    Applied to draft only.
+    
+    Fixes #106
+    
+    :house: Remote-Dev: homespace
+
+M	docs/specification/draft/basic/lifecycle.mdx
+
+commit a7f693a60e0b53cdb749a1e889594463c78df927
+Author: Den Delimarsky <den@anthropic.com>
+Date:   Wed Mar 25 19:35:14 2026 +0000
+
+    spec: make stdio shutdown sequence platform-neutral
+    
+    The stdio shutdown sequence referenced SIGTERM and SIGKILL, which are
+    POSIX-only. Windows has no direct equivalent; TerminateProcess is a
+    hard kill with no graceful intermediate step.
+    
+    Restructured the client steps to describe intent (close stdin, wait,
+    force-kill) rather than POSIX mechanics, with a follow-up paragraph
+    naming the platform-specific APIs and linking to their documentation.
+    
+    Added a normative SHOULD that servers exit on stdin EOF. This is the
+    only portable graceful-shutdown signal, and honoring it reduces the
+    need for forced termination. All four official SDKs already rely on
+    stdin closure as the graceful phase on Windows.
+    
+    Applied to draft only.
+    
+    Fixes #1090
+    
+    :house: Remote-Dev: homespace
+
+M	docs/specification/draft/basic/lifecycle.mdx
+
+commit fcc57c725e8b9db4b71520fbec7bf7ec65b04514
+Author: Den Delimarsky <den@anthropic.com>
+Date:   Wed Mar 25 20:05:05 2026 +0000
+
+    docs: remove spec security_best_practices files covered by redirects
+    
+    The 2025-06-18 and 2025-11-25 spec versions each had a
+    basic/security_best_practices.mdx that duplicated content now living at
+    docs/tutorials/security/security_best_practices. Redirects were already
+    in place; the source files were dead weight.
+    
+    All 13 inbound links from authorization.mdx, transports.mdx,
+    changelog.mdx, and SEP-1036 use anchors (#token-passthrough,
+    #confused-deputy-problem, #session-hijacking, #scope-minimization) that
+    exist on the redirect target, so the redirect preserves them cleanly.
+    
+    :house: Remote-Dev: homespace
+
+D	docs/specification/2025-06-18/basic/security_best_practices.mdx
+D	docs/specification/2025-11-25/basic/security_best_practices.mdx
+
+commit 65d7b6705576c4592e3f5923e48736fc167c5aa3
+Author: Den Delimarsky <den@anthropic.com>
+Date:   Wed Mar 25 18:34:29 2026 +0000
+
+    spec: clarify prompts are user-initiated, roots are informational
+    
+    The terms 'user-controlled' (prompts) and 'boundaries' (roots) could
+    give implementers a false sense of security.
+    
+    'User-controlled' implied the user controls prompt content, when in fact
+    prompt text is authored by the server and could contain malicious
+    instructions. Changed to 'user-initiated' to clarify the user decides
+    when a prompt runs, not what it contains.
+    
+    'Boundaries' and 'have access to' implied roots enforce access control,
+    when roots are purely informational guidance. Rewrote the intro to make
+    clear the protocol does not restrict server filesystem access.
+    
+    Applied to the draft spec and the server-concepts learning guide.
+    
+    Fixes #913
+    
+    :house: Remote-Dev: homespace
+
+M	docs/specification/draft/client/roots.mdx
+M	docs/specification/draft/index.mdx
+M	docs/specification/draft/server/prompts.mdx
+
+commit 30c5ced371fe6be6ba631734bc273d9fb1bafcbc
+Author: Den Delimarsky <den@anthropic.com>
+Date:   Wed Mar 25 18:09:37 2026 +0000
+
+    spec: clarify list request obligations for declared capabilities
+    
+    Add normative language to the tools, resources, and prompts
+    Capabilities sections stating that servers declaring a capability
+    MUST respond to the corresponding list request with the set
+    currently available to the requesting client. The set MAY be empty
+    and MAY change (cross-linked to the existing List Changed
+    Notification section).
+    
+    This makes explicit the contract that all implementations already
+    follow, without constraining progressive disclosure, auth-gating,
+    or per-client filtering patterns.
+    
+    Closes #627
+    
+    :house: Remote-Dev: homespace
+
+M	docs/specification/draft/server/prompts.mdx
+M	docs/specification/draft/server/resources.mdx
+M	docs/specification/draft/server/tools.mdx
+
+commit ee8b36c9ec5ed2fe7b1482dc0650bcd0b41dd93d
+Author: Den Delimarsky <den@anthropic.com>
+Date:   Tue Mar 24 00:15:50 2026 +0000
+
+    schema: exclude @nullable from typedoc rendering
+    
+    The @nullable JSDoc tag is a generator hint for typescript-json-schema,
+    not reader-facing documentation. The type signature already shows
+    `number | null`, so rendering the tag as a "Nullable" heading is
+    redundant noise in the schema reference page.
+    
+    :house: Remote-Dev: homespace
+
+M	docs/specification/2025-11-25/schema.mdx
+M	docs/specification/draft/schema.mdx
+
+commit 357adac47ab2654b64799f994e6db8d3df4ee19d
+Author: Den Delimarsky <den@anthropic.com>
+Date:   Sun Mar 15 17:36:29 2026 +0000
+
+    schema: allow null for Task.ttl in generated JSON schema
+    
+    The TypeScript source declares `ttl: number | null` and documents
+    "null for unlimited", but typescript-json-schema drops `null` from
+    unions without strictNullChecks. Add `@nullable` JSDoc so the
+    generated JSON schema emits `"type": ["integer", "null"]` and servers
+    can send `{"ttl": null}` without failing validation.
+    
+    Fixes #2313
+    
+    :house: Remote-Dev: homespace
+
+M	docs/specification/2025-11-25/schema.mdx
+M	docs/specification/draft/schema.mdx
+M	schema/2025-11-25/schema.json
+M	schema/2025-11-25/schema.ts
+M	schema/draft/schema.json
+M	schema/draft/schema.ts
+
+commit 3847797299449d1cd1d9d1caa6a3dd7ecfb9fdae
+Author: Den Delimarsky <den@anthropic.com>
+Date:   Tue Mar 24 00:27:17 2026 +0000
+
+    spec: link URL mode reference and wrap at 100 chars
+    
+    Link the URL mode mention in the sensitive-information warning to the
+    URL Mode Elicitation Requests section so readers can jump to the
+    mechanism being prescribed. Also wrap the new prose at 100 characters.
+    
+    :house: Remote-Dev: homespace
+
+M	docs/specification/2025-11-25/client/elicitation.mdx
+M	docs/specification/draft/client/elicitation.mdx
+
+commit a5b18cdff16f33f460c0583183453b3f169fcdcc
+Author: Den Delimarsky <den@anthropic.com>
+Date:   Tue Mar 24 00:25:22 2026 +0000
+
+    Clarify "sensitive information" scope in elicitation spec
+    
+    The prohibition on form mode elicitation for "sensitive information" was
+    ambiguous about whether it covered general PII (names, emails, usernames)
+    or only secrets/credentials. This led to confusion about whether servers
+    could ever collect basic profile data via form mode.
+    
+    Clarify that the MUST NOT applies to secrets and credentials that grant
+    access or authorize transactions (passwords, API keys, tokens, payment
+    credentials). General contact/profile data is at the server's discretion,
+    subject to the user's ability to review and decline.
+    
+    Fixes #1466
+    
+    :house: Remote-Dev: homespace
+
+M	docs/specification/2025-11-25/client/elicitation.mdx
+M	docs/specification/draft/client/elicitation.mdx
+
+commit b74ea8dd8161552adb6365b99ee5f5ee42bce667
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Mon Mar 23 22:00:20 2026 +0000
+
+    Mark SEP-2149 as Final and regenerate
+    
+    - Change status from Draft to Final
+    - Fix contributor-ladder links to use /seps/ path
+    - Regenerate SEP docs and navigation
+
+M	seps/2149-working-group-charter-template.md
+
+commit 66dcf3e837929dd3d394f27370ac7389a513f5a4
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Tue Mar 17 16:13:46 2026 +0000
+
+    Fix agenda wording: publicly, link to agenda
+
+M	seps/2149-working-group-charter-template.md
+
+commit bc4be7d792257b658bcd4a0833963c054a19f8bf
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Tue Mar 17 14:34:12 2026 +0000
+
+    remove reviewer based on kvg's and paulc's comments
+
+M	seps/2149-working-group-charter-template.md
+
+commit 83687983b32ad23d92cb2752cfc345a994453761
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Mon Mar 16 18:07:42 2026 +0000
+
+    Relax agenda publishing requirement in SEP to match governance doc
+    
+    Drop the 24-hour advance requirement; agendas must be published and
+    available but can be posted closer to the meeting time.
+
+M	seps/2149-working-group-charter-template.md
+
+commit 56f01f78e5eedb46cbcefe0a460628e2ced06671
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Mon Mar 16 17:40:08 2026 +0000
+
+    Specify GitHub Discussions for WG quarterly reports, make membership optional
+    
+    - §1.8: Quarterly updates posted to the WG's GitHub Discussions category,
+      optionally reviewed in core maintainer meetings
+    - §6: Membership list can be omitted for groups with no members yet
+    - §1.9: Sync 'widely acknowledged concern' wording to governance doc
+    - Propagate all SEP changes to working-interest-groups.mdx and charter-template.mdx
+    - Relax agenda publishing requirement in governance doc
+
+M	seps/2149-working-group-charter-template.md
+
+commit 1ba6c83a019ab3a7a1da59ebd44206c9cb1a8632
+Author: David Soria Parra <167242713+dsp-ant@users.noreply.github.com>
+Date:   Mon Mar 16 16:17:56 2026 +0000
+
+    Update seps/2149-working-group-charter-template.md
+    
+    Co-authored-by: Jonathan Hefner <jonathan@hefner.pro>
+
+M	seps/2149-working-group-charter-template.md
+
+commit d5a20c2ce0fd5a269889fe2d13d7a25ffcd1a38a
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Mon Mar 16 16:05:08 2026 +0000
+
+    Ship charter template and governance docs as SEP artifacts
+    
+    - Add docs/community/charter-template.mdx with copyable fill-in template
+    - Rewrite docs/community/working-interest-groups.mdx with Part 1 governance
+      rules (leadership, participation, decision-making, escalation, lifecycle)
+      while keeping the IG/WG explanations, quick reference, and FAQ
+    - Add charter-template to docs.json nav
+    - Apply review feedback: backtick channel names, docs/ path prefixes,
+      blockquote formatting for examples
+    - Update SEP Reference Implementation section to match actual artifacts
+
+M	seps/2149-working-group-charter-template.md
+
+commit 84a93e3ceb4813d6706bfd1670b04e9d8764be45
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Wed Mar 11 19:16:22 2026 +0000
+
+    Align with SEP-2148 contributor ladder
+    
+    - Rename group participation tier Member to WG Member to avoid collision with the org-wide ladder Member role
+    - Fix Lead Core Maintainer terminology to Lead Maintainer
+    - Move CM sponsorship, ladder Member prerequisite, and sustained-engagement requirement to all Leads (WG and IG), not WG-only
+    - Replace Community Moderator IG governance authority with Core Maintainer authority (formation, retirement, charter amendments)
+    - Grant WG Leads SEP triage authority in responsibility list and authority table
+    - Add cross-reference to SEP-2148 in abstract
+    - Fix typos (Maintain, respective)
+
+M	seps/2149-working-group-charter-template.md
+
+commit 0f19c0d069a39c7e8107b20818bc26e4f248d120
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Thu Feb 12 15:05:50 2026 +0000
+
+    format
+
+M	seps/2149-working-group-charter-template.md
+
+commit 1cf963d3c5eef0b5e9f0c724f077d9e68fd95da1
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Wed Feb 11 21:17:07 2026 +0000
+
+    Add 8-week transition period for existing groups
+    
+    Existing WGs and IGs are grandfathered in and do not need to re-apply
+    through the formation process. They have 8 weeks to create a conforming
+    charter or be considered inactive.
+
+M	seps/2149-working-group-charter-template.md
+
+commit bcfc471829b35ee21d6d774fb0f8aaf18211d2be
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Wed Feb 11 21:10:45 2026 +0000
+
+    Split governance rules from charter template and cover both WGs and IGs
+    
+    Separate the SEP into two clear parts:
+    
+    Part 1 (Group Governance): Fixed rules that apply uniformly to all groups -
+    leadership, participation tiers, decision-making, escalation, meeting
+    requirements, reporting, and lifecycle.
+    
+    Part 2 (Charter Template): Fields each group fills in - mission, scope,
+    leadership roster, authority table, membership, operations, and deliverables.
+    
+    Extend coverage to both Working Groups and Interest Groups with lighter
+    requirements for IGs where appropriate (no formal decision authority, no
+    deliverables tracking, no quarterly reporting).
+
+M	seps/2149-working-group-charter-template.md
+
+commit 6fea25ed7a474ae90820a3f1f0073ce3ffa10e95
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Mon Feb 9 23:22:35 2026 +0000
+
+    format
+
+M	seps/2149-working-group-charter-template.md
+
+commit be86025057bec231d0773fb12b1fa9a732cc4f41
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Mon Feb 9 21:21:52 2026 +0000
+
+    Restructure decision-making into clear progression and improve WG flexibility
+    
+    Refactor the charter template to use a 3-step decision-making progression
+    (lazy consensus → formal vote → escalation), clarify which disputes should
+    bypass WG voting and escalate directly to Core Maintainers, make meeting
+    cadence flexible based on WG lifecycle stage, and add expectations for
+    community involvement in operational duties.
+    
+    Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+
+M	seps/2149-working-group-charter-template.md
+
+commit fe45f293ea143bbf96fe7086642d7c76dc34d5e5
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Mon Feb 9 18:51:20 2026 +0000
+
+    Use GitHub Discussions for meeting notes, remove recording requirement
+    
+    Switch agenda and meeting notes from GitHub issues to the Meeting Notes
+    category in GitHub Discussions. Remove the recording requirement due to
+    technical hurdles.
+    
+    Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+
+M	seps/2149-working-group-charter-template.md
+
+commit 8d2a51f67ff6aac45af8d85a4b6f4df6852bbc1d
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Mon Feb 9 18:48:20 2026 +0000
+
+    Improve escalation path based on community feedback
+    
+    Rework the escalation process to address concerns raised by Luca and
+    Sarah: emphasize resolving disagreements locally first, escalate to the
+    CM group rather than a single CM, have the group designate a CM to
+    handle resolution (avoiding shared organizational affiliation with the
+    parties involved), and report back to the group.
+    
+    Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+
+M	seps/2149-working-group-charter-template.md
+
+commit 1a6263daa4261f9e924c06a3248bc5717ab66c0c
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Mon Feb 9 18:36:11 2026 +0000
+
+    Add lead responsibility for diverse membership outreach
+    
+    Address concern about unintentional WG capture by adding an explicit
+    lead responsibility to proactively reach out to relevant participants
+    to ensure broad, representative membership across organizations and
+    perspectives, particularly during formation and when members depart
+    or become inactive.
+    
+    Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>
+
+M	seps/2149-working-group-charter-template.md
+
+commit 692f33f19352689a9fcead31dcfa8fcba7efa786
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Mon Feb 9 15:58:02 2026 +0000
+
+    remove duplicated sentence
+
+M	seps/2149-working-group-charter-template.md
+
+commit aaa365e821a09e14dcdf9ca858a1d95c66751271
+Author: David Soria Parra <167242713+dsp-ant@users.noreply.github.com>
+Date:   Tue Feb 3 16:23:18 2026 +0000
+
+    Update seps/2149-working-group-charter-template.md
+    
+    Co-authored-by: Tadas Antanavicius <tadas@tadasant.com>
+
+M	seps/2149-working-group-charter-template.md
+
+commit 39d57f086ed70eaa64ec1412e30e57e4bc96d3fe
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Mon Jan 26 11:22:33 2026 +0000
+
+    Assign SEP number 2149 to working group charter template
+
+R099	seps/0000-working-group-charter-template.md	seps/2149-working-group-charter-template.md
+
+commit 17f25d07d481504b853675d7e94a76b047268294
+Author: Sarah Novotny <sarah.novotny@gmail.com>
+Date:   Wed Jan 21 20:34:12 2026 +0000
+
+    Add Sarah Novotny as co-author on SEP-0000
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	seps/0000-working-group-charter-template.md
+
+commit 06538ce421eaa0f8b1a329f0dfaac92c01d0db49
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Thu Jan 15 23:13:23 2026 +0000
+
+    SEP-0000: MCP Working Group Charter Template
+    
+    Establishes a standardized charter template for MCP Working Groups,
+    providing consistent structure for defining scope, leadership,
+    decision-making authority, membership, and operations.
+    
+    Key elements:
+    - Required charter sections (mission, scope, leadership, authority,
+      membership, operations, deliverables, lifecycle)
+    - Tiered participation model (Observer, Participant, Member, Lead)
+    - Authority and decision rights matrix
+    - Lazy consensus as default with voting fallback
+    - Escalation paths to Core Maintainers
+    - Formation and retirement criteria
+    - Quarterly reporting requirements
+    
+    Claude-Generated-By: Claude Code (cli/claude-opus-4-5=100%)
+    Claude-Steers: 0
+    Claude-Permission-Prompts: 0
+    Claude-Escapes: 0
+
+A	seps/0000-working-group-charter-template.md
+
+commit 018d11709fdd8e0ade4bb6f58127e95eb7275b36
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Thu Mar 19 09:43:06 2026 -0500
+
+    Reorganize tool error handling section for clarity
+    
+    Group each error category (Protocol Errors, Tool Execution Errors) with
+    its description, examples, and JSON-RPC code block together under its
+    heading, instead of separating definitions from examples. Move client
+    `SHOULD`/`MAY` guidance to the end after both categories are defined.
+    
+    No content changes — purely structural reorganization.
+    
+    Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
+
+M	docs/specification/draft/server/tools.mdx
+
+commit 1fbf877780da79060f7a96a1f5a5e5acb821713f
+Author: David Soria Parra <167242713+dsp-ant@users.noreply.github.com>
+Date:   Wed Mar 18 20:32:50 2026 +0000
+
+    SEP-2148: MCP Contributor Ladder (#2148)
+    
+    * SEP-0000: MCP Contributor Ladder
+    
+    Establishes a formal contributor ladder for the MCP project, defining
+    clear roles, responsibilities, and advancement criteria from initial
+    contributor through Core Maintainer.
+    
+    Key elements:
+    - Role definitions: Contributor, Member, Reviewer, Maintainer, Core
+      Maintainer, Lead Core Maintainer
+    - Advancement process with sponsorship requirements
+    - Decision-making delegation and escalation matrix
+    - Multiple contribution pathways (code, spec, docs, community)
+    - Working Group Leadership framework
+    - Succession planning for Lead Core Maintainers
+    
+    Claude-Generated-By: Claude Code (cli/claude-opus-4-5=100%)
+    Claude-Steers: 1
+    Claude-Permission-Prompts: 3
+    Claude-Escapes: 0
+    
+    * Add Sarah Novotny as co-author on SEP-0000
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+    
+    * Fix markdown formatting with Prettier
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+    
+    * Assign SEP number 2148 to contributor ladder
+    
+    * address comments
+    
+    * npm run prep
+    
+    * Address review comments from localden and jonathanhefner
+    
+    - Simplify abstract, remove security-focused language
+    - Reframe motivation around community trust and MCP goals
+    - Replace Security-Conscious Growth principle with Alignment With MCP Goals
+    - Clarify timelines require meaningful contributions, not just tenure
+    - Mark Lead Core Maintainer as founders-only with no advancement path
+    - Add Interest Groups alongside Working Groups
+    - Consolidate nomination process steps
+    - Merge Approved By and Minimum Sponsors into single column
+    - Remove interview findings reference
+    - Various wording improvements per reviewer suggestions
+    
+    * Add Community Moderator role and address remaining review feedback
+    
+    - Rename Lead Core Maintainer -> Lead Maintainer throughout for consistency
+      with the Succession section
+    - Add Community Moderator role as a parallel track (table, section, escalation,
+      advancement table, nomination checklist)
+    - Add anchor links from role summary table to role sections
+    - Clarify timelines as minimum floors, not guarantees of advancement
+    - Add inactivity clauses for Maintainer (6mo) and Core Maintainer (6mo)
+    - Introduce IG Facilitator terminology and add IG to escalation matrix,
+      delegation principle, and WG/IG leadership section
+    - Fix advancement table to include Core/Lead Maintainer fast-path sponsorship
+      for Member and Reviewer (previously only in role sections)
+    - Sync Member privileges list with summary table (GitHub org membership,
+      triage rights, WG/IG eligibility)
+    - Add Maintainer and Community Moderator nomination checklist templates
+    - Fix missing backticks on MAINTAINERS.md reference
+    
+    * Suggested tweaks to contributor ladder roles, requirements, and responsibilities
+    
+    :house: Remote-Dev: homespace
+    
+    * Align with SEP-2149 and add docs page
+    
+    - Add cross-references to SEP-2149 in abstract, escalation section, and WG/IG leadership section
+    - Clarify Member lazy consensus privilege refers to org-level decisions
+    - Grant WG Leads SEP triage authority with appeal to Core Maintainers
+    - Add docs/community/contributor-ladder.mdx as the user-facing docs page
+    - Register the new page in docs.json Governance nav group
+    
+    * Update seps/2148-contributor-ladder.md
+    
+    Co-authored-by: Ola Hungerford <olahungerford@gmail.com>
+    
+    * Update docs/community/seps/2148-contributor-ladder.mdx
+    
+    * Update seps/2148-contributor-ladder.md
+    
+    Co-authored-by: Cliff Hall <cliff@futurescale.com>
+    
+    * Format contributor-ladder.mdx with prettier
+    
+    Wrap and indent <Note> block bodies to match MDX component formatting.
+    
+    :house: Remote-Dev: homespace
+    
+    * Update docs/community/contributor-ladder.mdx
+    
+    Co-authored-by: Paul Carleton <paulcarletonjr@gmail.com>
+    
+    * remove reviewer based on kvg's and paulc's comments
+    
+    * remove current lead maintainer listing
+    
+    * This SEP is now final.
+    
+    It was accepted by Core Maintainers with:
+    
+     8x YES (dsp, nickoai, pja, kvg, che, den, paulc, caitie)
+     0x NO ()
+     1x ABSENT (nick)
+    
+    In an async vote Wednesday March 11th, 2026 20:00 GMT and
+    Wednesday 18th, 2026 20:00 GMT on discord via a discord poll.
+    
+    ---------
+    
+    Co-authored-by: Sarah Novotny <sarah.novotny@gmail.com>
+    Co-authored-by: Claude Opus 4.5 <noreply@anthropic.com>
+    Co-authored-by: Peder <pederhp@hotmail.com>
+    Co-authored-by: Den Delimarsky <53200638+localden@users.noreply.github.com>
+    Co-authored-by: Ola Hungerford <olahungerford@gmail.com>
+    Co-authored-by: Cliff Hall <cliff@futurescale.com>
+    Co-authored-by: Den Delimarsky <den@anthropic.com>
+    Co-authored-by: Paul Carleton <paulcarletonjr@gmail.com>
+
+A	seps/2148-contributor-ladder.md
+
+commit 977e7481985c7e87e218ad037ea6ff5e383b8cfe
+Author: Den Delimarsky <den@anthropic.com>
+Date:   Wed Mar 11 00:09:06 2026 +0000
+
+    Derive latest spec version from Mintlify /latest/ redirect
+    
+    Removes the hardcoded LATEST_VERSION constant. Mintlify maintains a
+    /specification/latest/* redirect that always points to the current
+    latest version and preserves sub-paths, so we now:
+    
+    - Resolve the latest version at runtime via a HEAD request to
+      /specification/latest (cached in sessionStorage)
+    - Deep-link the banner to /specification/latest/<current-sub-path>
+      so users land on the equivalent page, not just the spec index
+    
+    No manual updates are required when a new spec version is published.
+    
+    Also removes the remaining <Info>Protocol Revision</Info> boxes from
+    2025-11-25 and draft pages that were added to main after this branch
+    was created.
+    
+    :house: Remote-Dev: homespace
+
+M	docs/specification/2025-11-25/basic/authorization.mdx
+M	docs/specification/2025-11-25/basic/index.mdx
+M	docs/specification/2025-11-25/basic/lifecycle.mdx
+M	docs/specification/2025-11-25/basic/transports.mdx
+M	docs/specification/2025-11-25/basic/utilities/cancellation.mdx
+M	docs/specification/2025-11-25/basic/utilities/ping.mdx
+M	docs/specification/2025-11-25/basic/utilities/progress.mdx
+M	docs/specification/2025-11-25/basic/utilities/tasks.mdx
+M	docs/specification/2025-11-25/client/elicitation.mdx
+M	docs/specification/2025-11-25/client/roots.mdx
+M	docs/specification/2025-11-25/client/sampling.mdx
+M	docs/specification/2025-11-25/server/index.mdx
+M	docs/specification/2025-11-25/server/prompts.mdx
+M	docs/specification/2025-11-25/server/resources.mdx
+M	docs/specification/2025-11-25/server/tools.mdx
+M	docs/specification/2025-11-25/server/utilities/completion.mdx
+M	docs/specification/2025-11-25/server/utilities/logging.mdx
+M	docs/specification/2025-11-25/server/utilities/pagination.mdx
+M	docs/specification/draft/basic/utilities/tasks.mdx
+M	docs/specification/draft/client/elicitation.mdx
+
+commit 1ebb7a0f976ca4479fd4216d0ad6c61b80db1300
+Author: evalstate <1936278+evalstate@users.noreply.github.com>
+Date:   Tue Mar 10 21:05:02 2026 +0000
+
+    Mark SEP-2260 as accepted
+
+M	seps/2260-Require-Server-requests-to-be-associated-with-Client-requests.md
+
+commit cefa055d4e2b81da8a5094c7d20cce42e72b3119
+Author: Shenouda Fawzy <shenouda.fawzy@hotmail.com>
+Date:   Tue Mar 10 03:47:15 2026 +0400
+
+    Docs: Clarify handling of JSON-RPC responses and notifications in client-to-server messages (#1733)
+    
+    * docs: clarify JSON-RPC response handling in Streamable HTTP transport
+    
+    * Revert "docs: clarify JSON-RPC response handling in Streamable HTTP transport"
+    
+    This reverts commit 0225eefb308e49058dd5836276c2826a2b3da6e6.
+    
+    As change is done on the active specs, when it should be on the draft spec.
+    
+    * docs: clarify JSON-RPC response when it is an input from the client
+    
+    * fix typo
+    
+    * docs: clarify item 3 in client sending message to server
+    
+    * docs: auto-render SEPs documentation
+    
+    * docs: auto-render SEPs documentation
+    
+    * update wordign to use body instead of input
+    
+    ---------
+    
+    Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+
+M	docs/specification/draft/basic/transports.mdx
+
+commit 3b875c5349255f8b29f09afee6c7079eb7ec9a0d
+Author: Really Him <git-dev@hesreallyhim.com>
+Date:   Mon Mar 9 18:24:35 2026 -0400
+
+    Feat (small): Add CompleteRequest.values maximum length to jsonschema (#588)
+    
+    * Update schema.ts - annotate CompleteRequest maximum length
+    
+    The comment on line 1121 for `CompleteRequest` states that the length of the `values` array must not exceed 100. This PR makes this explicit for the JSON schema by annotating it using `@TJS`
+    
+    * feat: add maximum length for CompleteResult.values to TJS
+    
+    * fix: minor fix in TJS usage
+    
+    * fix: remove unnuecessary tjs type comment
+    
+    * feat: add same minor enhancement to latest spec version
+    
+    * chore: fix prettier warning - trailing whitespace
+    
+    * chore: run check-schema-ts -- --write
+    
+    * chore: run generate and check docs
+    
+    * chore: undo changes prior to draft
+    
+    * fix(docs): add maxItems to typedoc excludeItems array
+    
+    ---------
+    
+    Co-authored-by: Really Him <hesereallyhim@proton.me>
+    Co-authored-by: Den Delimarsky <53200638+localden@users.noreply.github.com>
+
+M	schema/draft/schema.json
+M	schema/draft/schema.ts
+
+commit 838d6f69055f1d14400d67a47eb1d76207c7c34b
+Author: Konstantin Konstantinov <KKonstantinov@users.noreply.github.com>
+Date:   Mon Mar 2 15:19:51 2026 +0200
+
+    fix: Typescript schema types - move object types to Record<string, unknown> (#2139)
+    
+    * typescript types - move object types to Record<string, unknown>
+    
+    * prettier fix
+    
+    * draft schema regenerate
+    
+    * md schema regenerate
+    
+    * introduce JSONObject
+    
+    * prettier fix
+    
+    * Update schema/draft/schema.ts
+    
+    Co-authored-by: Jonathan Hefner <jonathan@hefner.pro>
+    
+    * regenerated schema
+    
+    * regenerated mdx
+    
+    ---------
+    
+    Co-authored-by: Jonathan Hefner <jonathan@hefner.pro>
+
+M	docs/specification/draft/schema.mdx
+M	schema/draft/schema.json
+M	schema/draft/schema.ts
+
+commit 69b29da6b577773d9b34e748b644e425a88a1186
+Author: evalstate <1936278+evalstate@users.noreply.github.com>
+Date:   Fri Feb 27 18:44:19 2026 +0000
+
+    grammar nit
+
+M	seps/2260-Require-Server-requests-to-be-associated-with-Client-requests.md
+
+commit ff960c9e8e40ef7598fe330f6ed20631efff3c4f
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Mon Feb 23 18:06:27 2026 +0000
+
+    remove accidentally added sep
+
+D	seps/2149-working-group-charter-template.md
+
+commit d7ef363e21b298c9123d2be915498184f84e2edc
+Author: David Soria Parra <167242713+dsp-ant@users.noreply.github.com>
+Date:   Sat Feb 21 11:03:15 2026 +0000
+
+    docs: Extensions as a top-level tab with dedicated pages (#2263)
+    
+    * docs: add top-level Extensions tab with dedicated pages
+    
+    - Add new top-level Extensions tab to docs navigation
+    - Migrate docs/docs/extensions/ → docs/extensions/ (new top-level)
+    - Split apps.mdx into apps/overview.mdx (concepts) and apps/build.mdx (implementation)
+    - Add new client-matrix.mdx showing extension support across clients
+    - Add new auth/overview.mdx, auth/oauth-client-credentials.mdx,
+      and auth/enterprise-managed-authorization.mdx
+    - Update docs.json redirects for old URLs
+    - Remove old docs/docs/extensions/ files (replaced by redirects)
+    
+    * Apply suggestions from code review
+    
+    Co-authored-by: Jonathan Hefner <jonathan@hefner.pro>
+    
+    * Update docs/extensions/auth/enterprise-managed-authorization.mdx
+    
+    Co-authored-by: Jonathan Hefner <jonathan@hefner.pro>
+    
+    * Update docs/extensions/auth/overview.mdx
+    
+    Co-authored-by: Jonathan Hefner <jonathan@hefner.pro>
+    
+    * Update docs/extensions/auth/oauth-client-credentials.mdx
+    
+    Co-authored-by: Jonathan Hefner <jonathan@hefner.pro>
+    
+    * docs: remove unused DASH component from client matrix
+    
+    * docs: add documentation guidelines to AGENTS.md
+    
+    * npm format
+    
+    * more CLAUDE.md
+    
+    * Update oauth-client-credentials.mdx
+    
+    * Regenerate SEPs: add working group charter template
+    
+    :house: Remote-Dev: homespace
+    
+    * Add TypeScript and Python SDK examples to OAuth client credentials doc
+    
+    :house: Remote-Dev: homespace
+    
+    * Format client credentials doc with Prettier
+    
+    :house: Remote-Dev: homespace
+    
+    * Add Steps and SDK install instructions to client credentials doc
+    
+    :house: Remote-Dev: homespace
+    
+    * Use Mintlify Steps for implementation guide and consolidate SDK install
+    
+    :house: Remote-Dev: homespace
+    
+    * Replace raw HTTP POST with mermaid diagram in client secrets section
+    
+    :house: Remote-Dev: homespace
+    
+    * Add security warning for client secret credentials
+    
+    :house: Remote-Dev: homespace
+    
+    * Remove duplicative JWT preference sentence
+    
+    :house: Remote-Dev: homespace
+    
+    * Bold long-lived credentials in warning
+    
+    :house: Remote-Dev: homespace
+    
+    ---------
+    
+    Co-authored-by: Jonathan Hefner <jonathan@hefner.pro>
+    Co-authored-by: Den Delimarsky <53200638+localden@users.noreply.github.com>
+    Co-authored-by: Den Delimarsky <den@anthropic.com>
+
+A	seps/2149-working-group-charter-template.md
+
+commit aa2773ef1141558d4d2f01e575f3fe63fe887a25
+Author: evalstate <1936278+evalstate@users.noreply.github.com>
+Date:   Thu Feb 19 17:37:45 2026 +0000
+
+    update spec
+
+M	seps/2260-Require-Server-requests-to-be-associated-with-Client-requests.md
+
+commit 23b186c72b1edb5fcd3270651afff1d4e65189fe
+Author: evalstate <1936278+evalstate@users.noreply.github.com>
+Date:   Thu Feb 19 17:34:52 2026 +0000
+
+    update links, remove superfluous text, add error handling
+
+M	docs/specification/draft/basic/transports.mdx
+M	docs/specification/draft/client/elicitation.mdx
+M	docs/specification/draft/client/roots.mdx
+M	docs/specification/draft/client/sampling.mdx
+M	seps/2260-Require-Server-requests-to-be-associated-with-Client-requests.md
+
+commit 17d0fce199dce6dd5be1ff9cac78f162e6d34c23
+Author: evalstate <1936278+evalstate@users.noreply.github.com>
+Date:   Wed Feb 18 12:24:47 2026 +0000
+
+    incorporate pcarleton suggestions, consistency of wording
+
+M	docs/specification/draft/basic/transports.mdx
+M	docs/specification/draft/basic/utilities/ping.mdx
+M	docs/specification/draft/client/elicitation.mdx
+M	docs/specification/draft/client/roots.mdx
+M	seps/2260-Require-Server-requests-to-be-associated-with-Client-requests.md
+
+commit 1d282b5fb8e614749e1ca32db81b7c631583b344
+Author: evalstate <1936278+evalstate@users.noreply.github.com>
+Date:   Wed Feb 18 11:03:25 2026 +0000
+
+    remove undeleted file
+
+D	seps/0000-Require-Server-requests-to-be-associated-with-Client-requests
+
+commit c84f68f982402722fbfdedcbe2988def50511d49
+Author: evalstate <1936278+evalstate@users.noreply.github.com>
+Date:   Wed Feb 18 11:00:51 2026 +0000
+
+    Clarify request association rules and ping exception in draft spec
+
+M	docs/specification/draft/basic/transports.mdx
+M	docs/specification/draft/basic/utilities/ping.mdx
+M	docs/specification/draft/client/elicitation.mdx
+M	docs/specification/draft/client/roots.mdx
+M	docs/specification/draft/client/sampling.mdx
+M	seps/2260-Require-Server-requests-to-be-associated-with-Client-requests.md
+
+commit 4d234963df342161ddddc152d97a0de609a0b897
+Author: evalstate <1936278+evalstate@users.noreply.github.com>
+Date:   Tue Feb 17 23:59:29 2026 +0000
+
+    Fix markdown formatting and generate SEP documentation
+    
+    - Fixed Prettier formatting in SEP-2260 markdown file
+    - Generated SEP documentation and updated docs index
+    - Fixed missing closing backtick and typo in Abstract and Design Intent sections
+
+M	seps/2260-Require-Server-requests-to-be-associated-with-Client-requests.md
+
+commit 54cd446b5c648b8ad40d71f49e440cb66a38f496
+Author: evalstate <1936278+evalstate@users.noreply.github.com>
+Date:   Tue Feb 17 23:57:34 2026 +0000
+
+    Fix markdown formatting issues in SEP-2260
+    
+    - Fixed missing closing backtick in Abstract (sampling/createMessage, elicitation/create)
+    - Fixed typo: 'Reqeusts' -> 'Requests' in Design Intent section
+
+M	seps/2260-Require-Server-requests-to-be-associated-with-Client-requests.md
+
+commit 709e7b8da8d662e0323451cd2acb0d96dc363eb6
+Author: shaun smith <1936278+evalstate@users.noreply.github.com>
+Date:   Tue Feb 17 23:42:03 2026 +0000
+
+    Rename to include PR# in name
+
+R100	seps/0000-Require-Server-requests-to-be-associated-with-Client-requests.md	seps/2260-Require-Server-requests-to-be-associated-with-Client-requests.md
+
+commit 551acc621dcc9e046a2e32751b134f06270c1b1b
+Author: shaun smith <1936278+evalstate@users.noreply.github.com>
+Date:   Tue Feb 17 23:30:38 2026 +0000
+
+    Use .md extension
+
+R100	seps/0000-Require-Server-requests-to-be-associated-with-Client-requests	seps/0000-Require-Server-requests-to-be-associated-with-Client-requests.md
+
+commit 808f545279a19eed8113630d6ae21bd5e9db1c55
+Author: shaun smith <1936278+evalstate@users.noreply.github.com>
+Date:   Tue Feb 17 23:30:01 2026 +0000
+
+    Update seps/0000-Require-Server-requests-to-be-associated-with-Client-requests
+    
+    Co-authored-by: Caitie McCaffrey <caitiem20@github.com>
+
+M	seps/0000-Require-Server-requests-to-be-associated-with-Client-requests
+
+commit 1c77e5a25414bd782f352c9d26fc3fbce02855a4
+Author: shaun smith <1936278+evalstate@users.noreply.github.com>
+Date:   Tue Feb 17 23:29:46 2026 +0000
+
+    Update seps/0000-Require-Server-requests-to-be-associated-with-Client-requests
+    
+    Co-authored-by: Caitie McCaffrey <caitiem20@github.com>
+
+M	seps/0000-Require-Server-requests-to-be-associated-with-Client-requests
+
+commit 398dbc355f314d86674d5c67bc503ca316712cd0
+Author: evalstate <1936278+evalstate@users.noreply.github.com>
+Date:   Mon Feb 16 08:38:33 2026 +0000
+
+    update title
+
+M	seps/0000-Require-Server-requests-to-be-associated-with-Client-requests
+
+commit 755745cf408c2e8e8e8a9fe1febd791adbf5a86b
+Author: evalstate <1936278+evalstate@users.noreply.github.com>
+Date:   Mon Feb 16 08:30:42 2026 +0000
+
+    Open SEP from transports-wg original discussion here: https://github.com/modelcontextprotocol/transports-wg/pull/8
+
+A	seps/0000-Require-Server-requests-to-be-associated-with-Client-requests
+
+commit be71fe4ece211b6687e588027d012a2c2d7c68f8
+Author: evalstate <1936278+evalstate@users.noreply.github.com>
+Date:   Mon Feb 16 08:38:33 2026 +0000
+
+    update title
+
+M	seps/0000-Require-Server-requests-to-be-associated-with-Client-requests
+
+commit 1bc129e301616d924d74d8dd921bcfdc7788df43
+Author: evalstate <1936278+evalstate@users.noreply.github.com>
+Date:   Mon Feb 16 08:30:42 2026 +0000
+
+    Open SEP from transports-wg original discussion here: https://github.com/modelcontextprotocol/transports-wg/pull/8
+
+A	seps/0000-Require-Server-requests-to-be-associated-with-Client-requests
+
+commit d6c28ab5e56a3c2978a2b79552a0b48c69cb2cfb
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Fri Feb 6 16:04:44 2026 -0600
+
+    Clarify that sampling `tools` are scoped to the request
+    
+    The `tools` array in a `sampling/createMessage` request defines tools
+    specifically for that sampling request. They don't need to correspond to
+    registered tools on the server. This was a source of confusion discussed
+    in the community.
+    
+    Closes #1988.
+    
+    Co-Authored-By: Paolo Ricciuti <ricciutipaolo@gmail.com>
+    Co-Authored-By: Claude Opus 4.6 (1M context) <noreply@anthropic.com>
+
+M	docs/specification/draft/client/sampling.mdx
+
+commit 622a9b4aa58113abcac1782c31c72af3f2819f7c
+Author: Adrian Cole <adrian@tetrate.io>
+Date:   Fri Feb 6 06:56:17 2026 +0800
+
+    update SEP-414 status to Final, fix created date
+    
+    - Status: Final (accepted with reference implementations in org SDKs)
+    - Created: 2025-04-25 (PR creation date per convention)
+    
+    Signed-off-by: Adrian Cole <adrian@tetrate.io>
+
+M	seps/414-request-meta.md
+
+commit 539fe48b791b6b797940b98313ae065c1696ca9d
+Author: Adrian Cole <adrian@tetrate.io>
+Date:   Fri Feb 6 06:48:55 2026 +0800
+
+    add specification wording and changelog for SEP-414
+    
+    Document OpenTelemetry trace context propagation conventions for
+    _meta keys (traceparent, tracestate, baggage) in the draft spec,
+    including the rationale for the DNS prefix exception.
+    
+    Signed-off-by: Adrian Cole <adrian@tetrate.io>
+
+M	docs/specification/draft/basic/index.mdx
+M	docs/specification/draft/changelog.mdx
+
+commit 8712009a4b85b465c6d8f1573d4d8a20fe291934
+Author: Adrian Cole <adrian@tetrate.io>
+Date:   Fri Feb 6 06:28:53 2026 +0800
+
+    clarify
+    
+    Signed-off-by: Adrian Cole <adrian@tetrate.io>
+
+M	seps/414-request-meta.md
+
+commit c585c00bb2ee7f96fa9deff92f846ed8c1a1e0ad
+Author: Adrian Cole <adrian@tetrate.io>
+Date:   Mon Feb 2 08:20:59 2026 +0900
+
+    logfire
+    
+    Signed-off-by: Adrian Cole <adrian@tetrate.io>
+
+M	seps/414-request-meta.md
+
+commit f07cb38b36ab3f7b36ab69bd09a067abf3aeb7d2
+Author: Adrian Cole <adrian@tetrate.io>
+Date:   Tue Jan 27 09:33:31 2026 +0900
+
+    clarify
+    
+    Signed-off-by: Adrian Cole <adrian@tetrate.io>
+
+M	seps/414-request-meta.md
+
+commit 9f2b78c6c86fb915f222fc10f9aa382066b6f4a2
+Author: Adrian Cole <64215+codefromthecrypt@users.noreply.github.com>
+Date:   Tue Jan 27 07:08:07 2026 +0800
+
+    Update seps/414-request-meta.md
+    
+    Co-authored-by: Cliff Hall <cliff@futurescale.com>
+
+M	seps/414-request-meta.md
+
+commit ae59856f56f4508219e6b7e96db8c86b52bd1e82
+Author: Adrian Cole <adrian@tetrate.io>
+Date:   Tue Jan 20 11:22:55 2026 +0900
+
+    SEP-414: Document request.params._meta convention (#414)
+
+A	seps/414-request-meta.md
+
+commit 71040c378f4f289527516bdf0e6cf5f7e9ed9170
+Author: Den Delimarsky <den@anthropic.com>
+Date:   Thu Feb 5 21:29:16 2026 +0000
+
+    Format elicitation.mdx
+    
+    :house: Remote-Dev: homespace
+
+M	docs/specification/draft/client/elicitation.mdx
+
+commit a812af7471a66451ef32121142310cd2f37aeeab
+Author: Paul Carleton <paulc@anthropic.com>
+Date:   Thu Feb 5 15:45:24 2026 +0000
+
+    fix: update stale security_best_practices links and CODEOWNERS after file move
+    
+    - Update 4 relative links in elicitation.mdx to new canonical path
+    - Add CODEOWNERS entry for new file location so auth-wg still reviews
+
+M	docs/specification/draft/client/elicitation.mdx
+
+commit 25f5c098dcc39353c77fb2c581e85595f8e469f2
+Author: Den Delimarsky <den@anthropic.com>
+Date:   Tue Feb 3 04:15:24 2026 +0000
+
+    Link fix.
+    
+    :house: Remote-Dev: homespace
+
+M	docs/specification/draft/basic/lifecycle.mdx
+M	docs/specification/draft/changelog.mdx
+
+commit 3a147cb1724fd173cfb00d65aa8c494eeb4bf100
+Author: Den Delimarsky <53200638+localden@users.noreply.github.com>
+Date:   Mon Feb 2 12:29:22 2026 -0800
+
+    Update SBP location
+
+D	docs/specification/draft/basic/security_best_practices.mdx
+
+commit ff8bd88d1dc1973a699bbdc85d8e52bb4d869edf
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Fri Jan 30 17:46:15 2026 -0600
+
+    Add guidance for `instructions` field in `InitializeResult`
+    
+    Improves documentation for the `instructions` field:
+    
+    - Clarify that instructions should focus on information that helps the
+      model use the server effectively
+    - Note that instructions should not duplicate tool descriptions
+    - Add example JSON showing realistic server instructions
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+A	schema/draft/examples/InitializeResult/with-instructions.json
+M	schema/draft/schema.json
+M	schema/draft/schema.ts
+
+commit 6c4c6f1081133f21171713e001b59e5ad223c908
+Author: David Soria Parra <167242713+dsp-ant@users.noreply.github.com>
+Date:   Fri Jan 30 11:53:51 2026 +0000
+
+    docs: Add contributing guide and improve community documentation (#2162)
+    
+    * docs: Add contributing guide and improve community documentation
+    
+    - Add comprehensive contributing guide (docs/community/contributing.mdx)
+      covering prerequisites, setup, types of contributions, and troubleshooting
+    
+    - Improve formatting across community docs with tables and ASCII diagrams
+      for better scannability
+    
+    - Add clarifying note to antitrust policy about when it applies
+    
+    - Enhance SEP guidelines with workflow diagram, status table, and
+      prototype requirements section
+    
+    - Add 'When to Use Which' section and FAQ to Working/Interest Groups
+    
+    - Update navigation to include contributing page and fix links
+    
+    - Remove redundant status definitions from SEP index (now references
+      SEP guidelines)
+    
+    * Update SEP generation
+    
+    :house: Remote-Dev: homespace
+    
+    * Guide update.
+    
+    :house: Remote-Dev: homespace
+    
+    * Add line length limits.
+    
+    :house: Remote-Dev: homespace
+    
+    * Prettier fix
+    
+    :house: Remote-Dev: homespace
+    
+    * Update communication guidance.
+    
+    :house: Remote-Dev: homespace
+    
+    * Fix broken code blocks.
+    
+    :house: Remote-Dev: homespace
+    
+    * Add short explainers.
+    
+    :house: Remote-Dev: homespace
+    
+    * Improve step explainers.
+    
+    :house: Remote-Dev: homespace
+    
+    * Update for brevity
+    
+    :house: Remote-Dev: homespace
+    
+    * Fix explainers
+    
+    :house: Remote-Dev: homespace
+    
+    * Prettier is no longer yelling at me and breaking code blocks.
+    
+    :house: Remote-Dev: homespace
+    
+    * Address PR review feedback from jonathanhefner
+    
+    - Direct feature requests to GitHub Discussions, not Issues
+    - Add Live calls row to communication channels table
+    - Rename SECURITY.md to Vulnerability reports in table
+    - Update Node.js version requirements to 24+
+    - Update npm version to 11.x
+    - Remove redundant table row about testing
+    - Add @example to @includeCode JSDoc reference
+    - Add Mintlify components documentation link
+    - Point to MCP Registry instead of deprecated servers list
+    - Replace ASCII art with Mermaid diagram in SEP workflow
+    - Change bi-weekly to every two weeks for clarity
+    
+    * Add note about source access
+    
+    :house: Remote-Dev: homespace
+    
+    ---------
+    
+    Co-authored-by: Den Delimarsky <den@anthropic.com>
+    Co-authored-by: Den Delimarsky <53200638+localden@users.noreply.github.com>
+
+M	docs/specification/2024-11-05/index.mdx
+M	docs/specification/2025-03-26/index.mdx
+M	docs/specification/2025-06-18/index.mdx
+M	docs/specification/2025-11-25/index.mdx
+M	docs/specification/draft/index.mdx
+
+commit b58881e43d883544dd7ca2a5d14d5155458c2cba
+Author: Den Delimarsky <den@anthropic.com>
+Date:   Wed Jan 28 18:00:56 2026 +0000
+
+    Update for ease of review.
+    
+    :house: Remote-Dev: homespace
+
+M	seps/1865-mcp-apps-interactive-user-interfaces-for-mcp.md
+
+commit b9817911b2174000d906e8cee2c1801481aaf1e4
+Author: Den Delimarsky <den@anthropic.com>
+Date:   Wed Jan 28 17:56:26 2026 +0000
+
+    Update with SEP structure.
+    
+    :house: Remote-Dev: homespace
+
+A	seps/1865-mcp-apps-interactive-user-interfaces-for-mcp.md
+
+commit 9f3e0fec5627072120bc9aa5e50aa89461b546ff
+Author: Sambhav Kothari <skothari44@bloomberg.net>
+Date:   Tue Jan 27 22:49:53 2026 +0000
+
+    Add experimental extensions framework to SEP-2133 (#2158)
+    
+    This amendment adds support for experimental extensions, allowing
+    Working Groups and Interest Groups to incubate extension ideas
+    within the MCP organization before formal SEP submission.
+    
+    Key changes:
+    - Add Experimental Extensions section with experimental-ext-<name>
+      naming convention
+    - Experimental extensions MUST be associated with a WG/IG
+    - Any maintainer may create experimental repos while SEP is in draft
+    - Graduation to official status follows standard SEP process
+    - Update Abstract and Definition to acknowledge experimental extensions
+    - Update Lifecycle/Creation to reference experimental incubation path
+
+M	seps/2133-extensions.md
+
+commit f88a634986f71bf6d161ebb1452634e36c5eec3a
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Tue Jan 27 11:24:47 2026 +0000
+
+    Update SEP-2085 status to Final
+
+M	seps/2085-governance-succession-and-amendment.md
+
+commit 730776d2f4c7e69f1c5c3c2d80d747387adbb078
+Author: Jianwei Mao <maojianwei2016@126.com>
+Date:   Tue Jan 27 12:18:10 2026 +0800
+
+    fix the sequence diagram, client should open the SSE stream first. (#1688)
+    
+    * fix the sequence diagram, client should open the SSE stream first.
+    
+    Client should open the SSE stream first, then server can send prompts/list_changed notification.
+    
+    * Update docs/specification/2025-06-18/server/prompts.mdx
+    
+    Co-authored-by: Jonathan Hefner <jonathan@hefner.pro>
+    
+    * Update docs/specification/2025-06-18/server/prompts.mdx
+    
+    Co-authored-by: Jonathan Hefner <jonathan@hefner.pro>
+    
+    * Transfer changes to `docs/specification/draft/`
+    
+    ---------
+    
+    Co-authored-by: Jonathan Hefner <jonathan@hefner.pro>
+
+M	docs/specification/draft/server/prompts.mdx
+
+commit 9bf1cd9d249794314b6c0d9266e4ab8d47b58201
+Author: Peter Alexander <pja@anthropic.com>
+Date:   Tue Jan 27 00:52:38 2026 +0000
+
+    Update SEP-2133 status to Final
+
+M	seps/2133-extensions.md
+
+commit bb676f3b8954629620deb52d6f939975249379ae
+Author: Stephen Halter <halter73@gmail.com>
+Date:   Mon Jan 26 15:37:36 2026 -0800
+
+    Merge pull request #2055 from halter73/categorize-new-schema
+    
+    Add JSONRPCResponse and SamplingMessageContentBlock to generated schema
+
+M	docs/specification/2025-11-25/schema.mdx
+M	docs/specification/draft/schema.mdx
+M	schema/2025-11-25/schema.ts
+M	schema/draft/schema.ts
+
+commit f19398725c6ef464e1f3af0214cfde3ff4f80325
+Author: Peter Alexander <pja@anthropic.com>
+Date:   Mon Jan 26 14:31:44 2026 +0000
+
+    Add extensions capability to schema and create extensions docs page
+    
+    - Add 'extensions' field to ClientCapabilities and ServerCapabilities in draft schema
+    - Create extensions.mdx documentation page listing ext-auth and ext-apps
+    - Add extensions navigation to docs.json under Community tab
+    - Add Extension Negotiation section to lifecycle specification
+    - Add example JSON files for extension capabilities
+    - Regenerate schema.json and schema.mdx
+
+M	docs/specification/draft/basic/lifecycle.mdx
+M	docs/specification/draft/changelog.mdx
+M	docs/specification/draft/schema.mdx
+A	schema/draft/examples/ClientCapabilities/extensions-ui-mime-types.json
+A	schema/draft/examples/ServerCapabilities/extensions-ui.json
+M	schema/draft/schema.json
+M	schema/draft/schema.ts
+M	seps/2133-extensions.md
+
+commit eb8d5379f0ae76dee4abd95850563ec8bb474d49
+Author: Peter Alexander <pja@anthropic.com>
+Date:   Fri Jan 23 18:51:45 2026 +0000
+
+    Address review feedback on SEP-2133 Extensions
+    
+    - Update definition to be more flexible (modular, specialized, experimental)
+    - Add collision prevention guidance for extension identifiers
+    - Define what constitutes a breaking change
+    - Add example links to MAINTAINERS.md files
+    - Add SHOULD for working/interest groups
+    - Add hyperlink to SEP guidelines
+    - Require reference implementation before acceptance
+    - Clarify minor updates don't need SEP review
+    - Update graceful degradation to allow rejecting requests
+    - Clarify backwards compatibility concerns for extensions
+    - Update to RFC 2119 language throughout
+
+M	seps/2133-extensions.md
+
+commit 683b6b3b8dcf4c8c7047517c55efa09bd266e77a
+Author: Peter Alexander <pja@anthropic.com>
+Date:   Fri Jan 23 13:04:11 2026 +0000
+
+    Update seps/2133-extensions.md
+    
+    Co-authored-by: Che Liu <cheliu@google.com>
+
+M	seps/2133-extensions.md
+
+commit d4e17149e367289e933b34d4ed31e89f6178658c
+Author: Peter Alexander <pja@anthropic.com>
+Date:   Fri Jan 23 13:03:41 2026 +0000
+
+    Update seps/2133-extensions.md
+    
+    Co-authored-by: Che Liu <cheliu@google.com>
+
+M	seps/2133-extensions.md
+
+commit adcee8a8047e415cbf73d9bdf7f94ac5f622c70e
+Author: Peter Alexander <pja@anthropic.com>
+Date:   Thu Jan 22 15:15:12 2026 +0000
+
+    Update SEP number to 2133
+
+R099	seps/0000-extensions.md	seps/2133-extensions.md
+
+commit 26e118cc1c4733d23e9b92387e12d4aeebd1d831
+Author: Peter Alexander <pja@anthropic.com>
+Date:   Thu Jan 22 15:14:35 2026 +0000
+
+    SEP: Extensions framework for MCP
+
+A	seps/0000-extensions.md
+
+commit 003bb337691ba696a2f8bedbc1acf08f9493c5a3
+Author: Sam Morrow <sammorrowdrums@github.com>
+Date:   Mon Jan 26 16:58:41 2026 +0100
+
+    docs(spec): clarify Allow header requirement for 405 responses
+    
+    HTTP gateways (such as Apigee) enforce strict RFC compliance and may reject 405 responses that lack an Allow header, returning 502 Bad Gateway errors to clients. Making this requirement explicit in the MCP specification ensures SDK implementers include the header and avoid interoperability issues with enterprise infrastructure.
+
+M	docs/specification/draft/basic/transports.mdx
+
+commit e16fd354208b6d77eb211bab2ea83f0034fd0755
+Author: Alex Akimov <alexeyakimov@gmail.com>
+Date:   Mon Jan 26 02:32:29 2026 +0100
+
+    Added the description for the version field (#1609)
+    
+    * Added the description for the version field
+    
+    * Fix the formatting issue
+    
+    ---------
+    
+    Co-authored-by: Alex.Akimov <alex.akimov@monite.com>
+
+M	docs/specification/draft/schema.mdx
+M	schema/draft/schema.json
+M	schema/draft/schema.ts
+
+commit 8d07c35d3857412a351c595fe01b7bc70664ba06
+Author: David Soria Parra <167242713+dsp-ant@users.noreply.github.com>
+Date:   Thu Jan 22 22:00:57 2026 +0000
+
+    Migrate remaining SEPs missed in PR #1804 (#2136)
+    
+    Add 10 SEPs that were missed during the initial migration in PR #1804:
+    - SEP-991: OAuth Client ID Metadata Documents (Final)
+    - SEP-1024: MCP Client Security Requirements (Final - PR #1025 merged)
+    - SEP-1034: Default values for elicitation schemas (Final)
+    - SEP-1036: URL Mode Elicitation (Final)
+    - SEP-1303: Input Validation Errors (Final)
+    - SEP-1577: Sampling With Tools (Final)
+    - SEP-1613: JSON Schema 2020-12 Default Dialect (Final)
+    - SEP-1686: Tasks (Final)
+    - SEP-1699: SSE Polling via server-side disconnect (Final)
+    - SEP-1730: SDKs Tiering System (Final)
+    
+    Note: SEP-1309 (Specification Version Management) was NOT included as
+    PR #1404 implementing it is still open.
+    
+    Also fixes formatting issues in SEP metadata (Type, Author fields).
+
+A	seps/1024-mcp-client-security-requirements-for-local-server-.md
+A	seps/1034--support-default-values-for-all-primitive-types-in.md
+A	seps/1036-url-mode-elicitation-for-secure-out-of-band-intera.md
+A	seps/1303-input-validation-errors-as-tool-execution-errors.md
+A	seps/1577--sampling-with-tools.md
+A	seps/1613-establish-json-schema-2020-12-as-default-dialect-f.md
+A	seps/1686-tasks.md
+A	seps/1699-support-sse-polling-via-server-side-disconnect.md
+A	seps/1730-sdks-tiering-system.md
+A	seps/991-enable-url-based-client-registration-using-oauth-c.md
+
+commit 29ad3d6b7a57153c5c02bea976ef45c92954e9d1
+Author: David Soria Parra <167242713+dsp-ant@users.noreply.github.com>
+Date:   Thu Jan 22 15:27:16 2026 +0000
+
+    SEP-2085: Governance Succession and Amendment Procedures (#2085)
+
+A	seps/2085-governance-succession-and-amendment.md
+
+commit b34e47d0429f6028b40cba09ad1f656ef32926ec
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Thu Jan 22 14:48:39 2026 +0000
+
+    Update SEP-994 with full content from merged PR #1002
+    
+    The SEP was previously just a placeholder. Added complete content based on
+    the communication guidelines implementation in docs/community/communication.mdx.
+
+M	seps/994-shared-communication-practicesguidelines.md
+
+commit 528d6a15548db7ba56a1f8522f6b7f2169c0aa36
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Thu Jan 22 14:38:20 2026 +0000
+
+    fix: format schema.ts files
+
+M	schema/2025-11-25/schema.ts
+M	schema/draft/schema.ts
+
+commit aa7a8fffa824e860cbf890e9a7d4d91c754c7e41
+Author: David Soria Parra <167242713+dsp-ant@users.noreply.github.com>
+Date:   Thu Jan 22 14:31:43 2026 +0000
+
+    Migrate final and closed SEPs to seps/ directory (#1804)
+    
+    * Migrate final and closed SEPs to seps/ directory
+    
+    Migrate 10 SEPs with 'final' status or closed state to the new seps/ markdown format:
+    - SEP-932: Model Context Protocol Governance
+    - SEP-973: Expose additional metadata for Implementations, Resources, Tools and Prompts
+    - SEP-985: Align OAuth 2.0 Protected Resource Metadata with RFC 9728
+    - SEP-986: Specify Format for Tool Names
+    - SEP-990: Enable enterprise IdP policy controls during MCP OAuth flows
+    - SEP-994: Shared Communication Practices/Guidelines
+    - SEP-1046: Support OAuth client credentials flow in authorization
+    - SEP-1302: Formalize Working Groups and Interest Groups in MCP Governance
+    - SEP-1319: Decouple Request Payload from RPC Methods Definition
+    - SEP-1330: Elicitation Enum Schema Improvements and Standards Compliance
+    
+    Also includes the migration script (migrate_seps.js) for future use.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude <noreply@anthropic.com>
+    
+    * Migrate final and closed SEPs to seps/ directory
+    
+    - Migrate 10 final/closed SEPs from GitHub issues to seps/ directory
+    - Generate SEP documentation pages in docs/community/seps/
+    - Fix malformed Type fields in SEP-973, SEP-1319, SEP-1330
+    - Add complete content for SEP-1319 (was header-only)
+    
+    * Improve SEP sidebar: show titles and group by status
+    
+    - Add SEP titles to sidebar (truncated at 40 chars with ellipsis)
+    - Group SEPs by status (Final, Accepted, Draft, etc.) in navigation
+    - Makes sidebar more informative and less overwhelming
+    
+    ---------
+    
+    Co-authored-by: Claude <noreply@anthropic.com>
+
+A	seps/1046-support-oauth-client-credentials-flow-in-authoriza.md
+A	seps/1302-formalize-working-groups-and-interest-groups-in-mc.md
+A	seps/1319-decouple-request-payload-from-rpc-methods-definiti.md
+A	seps/1330-elicitation-enum-schema-improvements-and-standards.md
+A	seps/932-model-context-protocol-governance.md
+A	seps/973-expose-additional-metadata-for-implementations-res.md
+A	seps/985-align-oauth-20-protected-resource-metadata-with-rf.md
+A	seps/986-specify-format-for-tool-names.md
+A	seps/990-enable-enterprise-idp-policy-controls-during-mcp-o.md
+A	seps/994-shared-communication-practicesguidelines.md
+
+commit 7b5513e1e036ad03e8ce9c82da099b2629e6c562
+Author: Luca Chang <lucalc@amazon.com>
+Date:   Tue Jan 20 14:55:05 2026 -0800
+
+    fix: clarify that servers should not advertise tasks.list without context-binding
+
+M	docs/specification/2025-11-25/basic/utilities/tasks.mdx
+M	docs/specification/draft/basic/utilities/tasks.mdx
+
+commit 2e632f51de14ce3caa67124fbcb8b91de6dd2fec
+Author: Peter Alexander <pja@anthropic.com>
+Date:   Thu Jan 15 22:57:52 2026 +0000
+
+    Fix typos in draft specification
+    
+    - form -> from (elicitation.mdx)
+    - SHOULD takes -> SHOULD take (schema.ts)
+    - javascript -> JavaScript (security_best_practices.mdx)
+
+M	docs/specification/draft/basic/security_best_practices.mdx
+M	docs/specification/draft/client/elicitation.mdx
+M	docs/specification/draft/schema.mdx
+M	schema/draft/schema.json
+M	schema/draft/schema.ts
+
+commit 5c7dfbc59bc6d29fde6f6cf717d1a33ad8af8ae6
+Author: faridjaff <farid.jafri@tala.co>
+Date:   Tue Jan 13 06:13:48 2026 -0500
+
+    Fix broken CallToolRequest schema link in tools.mdx
+    
+    Add missing leading slash to make the link absolute, fixing incorrect URL resolution that was producing a duplicate path segment.
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/2025-11-25/server/tools.mdx
+M	docs/specification/draft/server/tools.mdx
+
+commit e469e098b223b1795a6bc2623d23bee5ab983758
+Author: Peter Alexander <pja@anthropic.com>
+Date:   Thu Jan 15 14:15:58 2026 +0000
+
+    fix(schema): move annotations to correct location in EmbeddedResource example
+    
+    The EmbeddedResource example incorrectly placed annotations inside the
+    'resource' field (TextResourceContents), but per the schema definition,
+    annotations should be a sibling of 'resource' in EmbeddedResource.
+    
+    TextResourceContents only has: uri, mimeType, text, _meta
+    EmbeddedResource has: type, resource, annotations, _meta
+    
+    This fix moves annotations to the correct level so the example validates
+    against the JSON schema.
+    
+    Claude-Generated-By: Claude Code (cli/claude-opus-4-5=100%)
+    Claude-Steers: 1
+    Claude-Permission-Prompts: 6
+    Claude-Escapes: 0
+
+M	docs/specification/draft/schema.mdx
+M	schema/draft/examples/EmbeddedResource/embedded-file-resource-with-annotations.json
+
+commit e3f86325b4ad0cd0828dbc0c7b37391a803fb8ad
+Author: Loganaden Velvindron <logan@cyberstorm.mu>
+Date:   Thu Jan 15 07:40:47 2026 +0400
+
+    update with suggestion from @localden
+    
+    Co-authored-by: Den Delimarsky <53200638+localden@users.noreply.github.com>
+
+M	docs/specification/draft/basic/security_best_practices.mdx
+
+commit f383ba9e623bdddc9e73475188e1a2cb7d3dd822
+Author: bilal_oumehdi <bilal.oumehdi@oracle.com>
+Date:   Thu Jan 15 02:13:57 2026 +0100
+
+    fix: correct the link to 2020-12 schema dialect
+
+M	docs/specification/2025-11-25/basic/index.mdx
+M	docs/specification/draft/basic/index.mdx
+
+commit d165cd68886292fd18385849c1095850e56b13b4
+Author: Luca Chang <131398524+LucaButBoring@users.noreply.github.com>
+Date:   Wed Jan 14 11:46:09 2026 -0800
+
+    Revise sampling specification to define all valid request and response fields (#531)
+    
+    * Revise sampling spec to define all valid request/response fields
+    
+    * Make sampling parameter handling more explicit
+    
+    * Specify that sampling request conversations should not be retained
+    
+    * Clarify that sampling temperature ranges depend on providers
+    
+    Co-authored-by: Cliff Hall <cliff@futurescale.com>
+    
+    * Update schema types in docs
+    
+    * Update sampling result fields to note new shape and stop reason
+    
+    * Clarify result content can be either a single block or an array
+    
+    ---------
+    
+    Co-authored-by: Cliff Hall <cliff@futurescale.com>
+    Co-authored-by: Den Delimarsky <53200638+localden@users.noreply.github.com>
+
+M	docs/specification/draft/client/sampling.mdx
+
+commit 087967e9b34dc959f6b5336c93acf56510730a56
+Author: Dale Seo <5466341+DaleSeo@users.noreply.github.com>
+Date:   Mon Jan 5 06:31:33 2026 -0500
+
+    Clarify HTTP POST terminology in JSON-RPC message requirements (#2034)
+
+M	docs/specification/draft/basic/transports.mdx
+
+commit e5332ff9ffdfc85df5388db22fa42d820a80743c
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Tue Dec 30 15:15:15 2025 -0600
+
+    Add example for progress token usage
+    
+    Adds a new example showing how to include a `progressToken` in `_meta`
+    when calling a tool. This demonstrates the connection between the token
+    passed in tool call requests and the progress notifications that
+    reference it.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+A	schema/draft/examples/CallToolRequestParams/tool-call-params-with-progress-token.json
+M	schema/draft/examples/ProgressNotification/progress-message.json
+M	schema/draft/examples/ProgressNotificationParams/progress-message.json
+M	schema/draft/schema.ts
+
+commit a27548d9edf99cdc605e6a293d725460934bfe08
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Tue Dec 30 14:22:49 2025 -0600
+
+    Add examples for JSON-RPC wrapper types to `schema.ts`
+    
+    Add JSON examples for `*Request`, `*Notification`, and `*ResultResponse`
+    types. These complement the existing examples for payload types
+    (`*Params`, `*Result`) by showing complete JSON-RPC message envelopes.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+A	schema/draft/examples/CallToolRequest/call-tool-request.json
+A	schema/draft/examples/CallToolResultResponse/call-tool-result-response.json
+A	schema/draft/examples/CancelledNotification/user-requested-cancellation.json
+A	schema/draft/examples/CompleteRequest/completion-request.json
+A	schema/draft/examples/CompleteResultResponse/completion-result-response.json
+A	schema/draft/examples/CreateMessageRequest/sampling-request.json
+A	schema/draft/examples/CreateMessageResultResponse/sampling-result-response.json
+A	schema/draft/examples/ElicitRequest/elicitation-request.json
+A	schema/draft/examples/ElicitResultResponse/elicitation-result-response.json
+A	schema/draft/examples/GetPromptRequest/get-prompt-request.json
+A	schema/draft/examples/GetPromptResultResponse/get-prompt-result-response.json
+A	schema/draft/examples/InitializeRequest/initialize-request.json
+A	schema/draft/examples/InitializeResultResponse/initialize-result-response.json
+A	schema/draft/examples/ListPromptsRequest/list-prompts-request.json
+A	schema/draft/examples/ListPromptsResultResponse/list-prompts-result-response.json
+A	schema/draft/examples/ListResourceTemplatesRequest/list-resource-templates-request.json
+A	schema/draft/examples/ListResourceTemplatesResultResponse/list-resource-templates-result-response.json
+A	schema/draft/examples/ListResourcesRequest/list-resources-request.json
+A	schema/draft/examples/ListResourcesResultResponse/list-resources-result-response.json
+A	schema/draft/examples/ListRootsRequest/list-roots-request.json
+A	schema/draft/examples/ListRootsResultResponse/list-roots-result-response.json
+A	schema/draft/examples/ListToolsRequest/list-tools-request.json
+A	schema/draft/examples/ListToolsResultResponse/list-tools-result-response.json
+A	schema/draft/examples/LoggingMessageNotification/log-database-connection-failed.json
+A	schema/draft/examples/PingRequest/ping-request.json
+A	schema/draft/examples/PingResultResponse/ping-result-response.json
+A	schema/draft/examples/ProgressNotification/progress-message.json
+A	schema/draft/examples/ReadResourceRequest/read-resource-request.json
+A	schema/draft/examples/ReadResourceResultResponse/read-resource-result-response.json
+A	schema/draft/examples/ResourceUpdatedNotification/file-resource-updated-notification.json
+A	schema/draft/examples/SetLevelRequest/set-logging-level-request.json
+A	schema/draft/examples/SetLevelResultResponse/set-logging-level-result-response.json
+A	schema/draft/examples/SubscribeRequest/subscribe-request.json
+A	schema/draft/examples/SubscribeResultResponse/subscribe-result-response.json
+A	schema/draft/examples/UnsubscribeRequest/unsubscribe-request.json
+A	schema/draft/examples/UnsubscribeResultResponse/unsubscribe-result-response.json
+M	schema/draft/schema.ts
+
+commit fad9db410faa10f2141d09cd1397a2c58e6462dc
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Tue Dec 30 10:02:17 2025 -0600
+
+    Add `*ResultResponse` interfaces for typed JSON-RPC responses
+    
+    Adds new interfaces that extend `JSONRPCResultResponse` and wrap
+    `*Result` types, providing full JSON-RPC response objects for
+    documentation purposes. Also updates documentation to distinguish
+    between `*Result` (payload only) and `*ResultResponse` (full response)
+    types.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+M	schema/draft/schema.json
+M	schema/draft/schema.ts
+
+commit a9375db173a45f11663e90e912f9c92df7797e58
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Fri Dec 26 14:07:26 2025 -0600
+
+    Show type signatures in member headings instead of hiding them
+    
+    Previously, type signature elements for members (`.tsd-signature`) were
+    hidden via CSS. Now, the TypeDoc plugin copies their text content into
+    each member's heading element (`.tsd-anchor-link`).
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/2025-06-18/schema.mdx
+M	docs/specification/2025-11-25/schema.mdx
+M	docs/specification/draft/schema.mdx
+
+commit 4c02c133c6e41fb78fdbee65bb4d491b978463da
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Fri Dec 26 09:33:32 2025 -0600
+
+    Extract `MetaObject` and `RequestMetaObject` types for `_meta` fields
+    
+    Introduces two named types to replace inline `_meta` type definitions:
+    
+    - `MetaObject`: A `Record<string, unknown>` type alias for `_meta` in
+      notifications, results, and content types
+    - `RequestMetaObject`: An interface with optional `progressToken` for
+      `_meta` in request params
+    
+    This cleans up the generated schema documentation by replacing verbose
+    inline type definitions with references to these named types.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+M	schema/draft/schema.json
+M	schema/draft/schema.ts
+
+commit 52e408f61faf9a722025a8728b2897258a0036af
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Wed Dec 24 16:12:42 2025 -0600
+
+    Add example for `CancelledNotificationParams` to `schema.ts`
+    
+    Adds a new example for a cancelled notification with a `reason` field
+    indicating user-requested cancellation.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+A	schema/draft/examples/CancelledNotificationParams/user-requested-cancellation.json
+M	schema/draft/schema.ts
+
+commit 4fc6b2300b026b0da1db2076d7fb28d4dc6a455e
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Wed Dec 24 15:47:24 2025 -0600
+
+    Add example for `ProgressNotificationParams` to `schema.ts`
+    
+    Adds a new example for a progress notification with a `message` field.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+A	schema/draft/examples/ProgressNotificationParams/progress-message.json
+M	schema/draft/schema.ts
+
+commit 8e9bb9f44dbf8c57703c71279d584cbf138390e7
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Wed Dec 24 15:36:59 2025 -0600
+
+    Add examples from `basic/lifecycle.mdx` to `schema.ts`
+    
+    Add examples for initialization-related types such as
+    `InitializeRequestParams` and `InitializeResult`.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+A	schema/draft/examples/InitializeRequestParams/full-client-capabilities.json
+A	schema/draft/examples/InitializeResult/full-server-capabilities.json
+A	schema/draft/examples/InitializedNotification/initialized-notification.json
+M	schema/draft/schema.ts
+
+commit 66137e2d0dc5b1e893626a4559826d8aa76f05ca
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Wed Dec 24 15:15:43 2025 -0600
+
+    Add examples from `client/elicitation.mdx` to `schema.ts`
+    
+    Add JSON examples for elicitation-related types such as
+    `ElicitRequestFormParams`, `ElicitResult`, and elicitation input
+    schemas.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+A	schema/draft/examples/BooleanSchema/boolean-input-schema.json
+A	schema/draft/examples/ClientCapabilities/elicitation-form-and-url-mode-support.json
+A	schema/draft/examples/ClientCapabilities/elicitation-form-only-implicit.json
+A	schema/draft/examples/ElicitRequestFormParams/elicit-multiple-fields.json
+A	schema/draft/examples/ElicitRequestFormParams/elicit-single-field.json
+A	schema/draft/examples/ElicitRequestURLParams/elicit-sensitive-data.json
+A	schema/draft/examples/ElicitResult/accept-url-mode-no-content.json
+A	schema/draft/examples/ElicitResult/input-multiple-fields.json
+A	schema/draft/examples/ElicitResult/input-single-field.json
+A	schema/draft/examples/ElicitationCompleteNotification/elicitation-complete.json
+A	schema/draft/examples/NumberSchema/number-input-schema.json
+A	schema/draft/examples/StringSchema/email-input-schema.json
+A	schema/draft/examples/TitledMultiSelectEnumSchema/titled-color-multi-select-schema.json
+A	schema/draft/examples/TitledSingleSelectEnumSchema/titled-color-select-schema.json
+A	schema/draft/examples/URLElicitationRequiredError/authorization-required.json
+A	schema/draft/examples/UntitledMultiSelectEnumSchema/color-multi-select-schema.json
+A	schema/draft/examples/UntitledSingleSelectEnumSchema/color-select-schema.json
+M	schema/draft/schema.ts
+
+commit dcb3fe476f1d357ec8baf1dda08ceba3a8cc51fe
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Wed Dec 24 14:05:23 2025 -0600
+
+    Add examples from `client/roots.mdx` to `schema.ts`
+    
+    Add JSON examples for roots-related types such as `ListRootsResult` and
+    `RootsListChangedNotification`.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+A	schema/draft/examples/ClientCapabilities/roots-list-changed-notifications.json
+A	schema/draft/examples/ClientCapabilities/roots-minimum-baseline-support.json
+A	schema/draft/examples/ListRootsResult/multiple-root-directories.json
+A	schema/draft/examples/ListRootsResult/single-root-directory.json
+A	schema/draft/examples/Root/project-directory.json
+A	schema/draft/examples/RootsListChangedNotification/roots-list-changed.json
+M	schema/draft/schema.ts
+
+commit 9656288ea8cca52e175c98e8e1fb1657f22a0ebf
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Wed Dec 24 13:31:22 2025 -0600
+
+    Add examples from `client/sampling.mdx` to `schema.ts`
+    
+    Add JSON examples for sampling-related types such as
+    `CreateMessageRequestParams`, `CreateMessageResult`, and
+    `SamplingMessage`.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+A	schema/draft/examples/ClientCapabilities/sampling-context-inclusion-support-soft-deprecated.json
+A	schema/draft/examples/ClientCapabilities/sampling-minimum-baseline-support.json
+A	schema/draft/examples/ClientCapabilities/sampling-tool-use-support.json
+A	schema/draft/examples/CreateMessageRequestParams/basic-request.json
+A	schema/draft/examples/CreateMessageRequestParams/follow-up-with-tool-results.json
+A	schema/draft/examples/CreateMessageRequestParams/request-with-tools.json
+A	schema/draft/examples/CreateMessageResult/final-response.json
+A	schema/draft/examples/CreateMessageResult/text-response.json
+A	schema/draft/examples/CreateMessageResult/tool-use-response.json
+A	schema/draft/examples/ModelPreferences/with-hints-and-priorities.json
+A	schema/draft/examples/SamplingMessage/multiple-content-blocks.json
+A	schema/draft/examples/SamplingMessage/single-content-block.json
+A	schema/draft/examples/ToolResultContent/get-weather-tool-result.json
+A	schema/draft/examples/ToolUseContent/get-weather-tool-use.json
+M	schema/draft/schema.ts
+
+commit bd8e25a76d54766aa88f7227d4f4bce4a1d595f3
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Wed Dec 24 12:06:37 2025 -0600
+
+    Add example for `PaginatedRequestParams` to `schema.ts`
+    
+    Adds a new example showing how to use the `cursor` parameter for
+    paginated requests. Also updates the existing `ListResourcesResult`
+    example to use base64-encoded cursor values for consistency across
+    pagination examples.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+M	schema/draft/examples/ListResourcesResult/resources-list-with-cursor.json
+A	schema/draft/examples/PaginatedRequestParams/list-with-cursor.json
+M	schema/draft/schema.ts
+
+commit 693b5d3675e342a5da6a68bf8457b416c838383d
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Wed Dec 24 11:08:30 2025 -0600
+
+    Add examples from `server/logging.mdx` to `schema.ts`
+    
+    Adds JSON examples for logging-related types such as
+    `SetLevelRequestParams` and `LoggingMessageNotificationParams`.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+A	schema/draft/examples/LoggingMessageNotificationParams/log-database-connection-failed.json
+A	schema/draft/examples/ServerCapabilities/logging-minimum-baseline-support.json
+A	schema/draft/examples/SetLevelRequestParams/set-log-level-to-info.json
+M	schema/draft/schema.ts
+
+commit 5ebc2934db88af3e9b8e1cd5c6cfead9604273cf
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Wed Dec 24 10:43:34 2025 -0600
+
+    Add examples from `server/completion.mdx` to `schema.ts`
+    
+    Add JSON examples for completion-related types such as
+    `CompleteRequestParams` and `CompleteResult`.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+A	schema/draft/examples/CompleteRequestParams/prompt-argument-completion-with-context.json
+A	schema/draft/examples/CompleteRequestParams/prompt-argument-completion.json
+A	schema/draft/examples/CompleteResult/multiple-completion-values-with-more-available.json
+A	schema/draft/examples/CompleteResult/single-completion-value.json
+A	schema/draft/examples/ServerCapabilities/completions-minimum-baseline-support.json
+M	schema/draft/schema.ts
+
+commit 1f8a8efacb68c77facb3293e4516a102574a3e14
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Wed Dec 24 09:54:35 2025 -0600
+
+    Add examples from `server/prompts.mdx` to `schema.ts`
+    
+    Adds JSON examples for prompt-related schema types such as
+    `ListPromptsResult`, `GetPromptRequestParams`, `GetPromptResult`, etc.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+A	schema/draft/examples/GetPromptRequestParams/get-code-review-prompt.json
+A	schema/draft/examples/GetPromptResult/code-review-prompt.json
+A	schema/draft/examples/ListPromptsResult/prompts-list-with-cursor.json
+A	schema/draft/examples/PromptListChangedNotification/prompts-list-changed.json
+A	schema/draft/examples/ServerCapabilities/prompts-list-changed-notifications.json
+A	schema/draft/examples/ServerCapabilities/prompts-minimum-baseline-support.json
+M	schema/draft/schema.ts
+
+commit 761240c526c9b4fe27c8b37a9af90536a37d527c
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Tue Dec 23 17:02:24 2025 -0600
+
+    Add examples from `server/resources.mdx` to `schema.ts`
+    
+    Add JSON examples for resource-related types such as `Resource`,
+    `ListResourcesResult`, `ReadResourceResult`, etc.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+A	schema/draft/examples/BlobResourceContents/image-file-contents.json
+A	schema/draft/examples/ListResourceTemplatesResult/resource-templates-list.json
+A	schema/draft/examples/ListResourcesResult/resources-list-with-cursor.json
+A	schema/draft/examples/ReadResourceResult/file-resource-contents.json
+A	schema/draft/examples/Resource/file-resource-with-annotations.json
+A	schema/draft/examples/ResourceListChangedNotification/resources-list-changed.json
+A	schema/draft/examples/ResourceUpdatedNotificationParams/file-resource-updated.json
+A	schema/draft/examples/ServerCapabilities/resources-all-notifications.json
+A	schema/draft/examples/ServerCapabilities/resources-list-changed-notifications-only.json
+A	schema/draft/examples/ServerCapabilities/resources-minimum-baseline-support.json
+A	schema/draft/examples/ServerCapabilities/resources-subscription-to-individual-resource-updates-only.json
+A	schema/draft/examples/SubscribeRequestParams/subscribe-to-file-resource.json
+A	schema/draft/examples/TextResourceContents/text-file-contents.json
+M	schema/draft/schema.ts
+
+commit 8e845e00ffc112d0648e87491267ad7d2489f30d
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Tue Dec 23 14:17:50 2025 -0600
+
+    Add examples from `server/tools.mdx` to `schema.ts`
+    
+    Add JSON examples for `Tool`, `CallToolRequestParams`, `CallToolResult`,
+    `ListToolsResult`, and `ToolListChangedNotification` schema types, as
+    well as content block schema types.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+A	schema/draft/examples/AudioContent/audio-wav-content.json
+A	schema/draft/examples/CallToolRequestParams/get-weather-tool-call-params.json
+A	schema/draft/examples/CallToolResult/invalid-tool-input-error.json
+A	schema/draft/examples/CallToolResult/result-with-structured-content.json
+A	schema/draft/examples/CallToolResult/result-with-unstructured-text.json
+A	schema/draft/examples/EmbeddedResource/embedded-file-resource-with-annotations.json
+A	schema/draft/examples/ImageContent/image-png-content-with-annotations.json
+A	schema/draft/examples/ListToolsResult/tools-list-with-cursor.json
+A	schema/draft/examples/ResourceLink/file-resource-link.json
+A	schema/draft/examples/ServerCapabilities/tools-list-changed-notifications.json
+A	schema/draft/examples/ServerCapabilities/tools-minimum-baseline-support.json
+A	schema/draft/examples/TextContent/text-content.json
+A	schema/draft/examples/Tool/with-default-2020-12-input-schema.json
+A	schema/draft/examples/Tool/with-explicit-draft-07-input-schema.json
+A	schema/draft/examples/Tool/with-no-parameters.json
+A	schema/draft/examples/Tool/with-output-schema-for-structured-content.json
+A	schema/draft/examples/ToolListChangedNotification/tools-list-changed.json
+M	schema/draft/schema.ts
+
+commit dc498fdf30d2bca0cd8973d25d91854cd6e11fac
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Tue Dec 23 13:22:48 2025 -0600
+
+    Add specific JSON-RPC error types to schema
+    
+    Define `InternalError`, `InvalidParamsError`, `InvalidRequestError`,
+    `MethodNotFoundError`, and `ParseError` interfaces that extend `Error`
+    with their standard JSON-RPC error codes. Each type includes
+    documentation on when it should be used in MCP implementations.
+    
+    Move `Error` from "Common Types" to a new "Errors" section that groups
+    all error types together.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+A	schema/draft/examples/InternalError/unexpected-error.json
+A	schema/draft/examples/InvalidParamsError/invalid-cursor.json
+A	schema/draft/examples/InvalidParamsError/invalid-tool-arguments.json
+A	schema/draft/examples/InvalidParamsError/unknown-prompt.json
+A	schema/draft/examples/InvalidParamsError/unknown-tool.json
+A	schema/draft/examples/MethodNotFoundError/roots-not-supported.json
+A	schema/draft/examples/ParseError/invalid-json.json
+M	schema/draft/schema.json
+M	schema/draft/schema.mdx
+M	schema/draft/schema.ts
+
+commit 5523c9ceaa543a12abace3108cc0aa51d8e52705
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Tue Dec 23 13:02:42 2025 -0600
+
+    Make examples on schema reference page collapsible
+    
+    Change example sections from `<div>` to `<details>` elements so they can
+    be expanded/collapsed, reducing visual clutter. The elements will be
+    collapsed by default, but will automatically expand when navigated to
+    via an `id` in the URL fragment.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/2025-06-18/schema.mdx
+M	docs/specification/2025-11-25/schema.mdx
+M	docs/specification/draft/schema.mdx
+
+commit 6cbfdd5d92fbf828bb8c2eefe05842ee74885269
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Fri Dec 26 08:50:37 2025 -0600
+
+    Link RPC method references in `schema.ts`
+    
+    Replace backtick code references like `resources/list` with JSDoc
+    `{@link TypeName | endpoint/path}` syntax throughout the schema
+    documentation. This enables proper cross-referencing in generated
+    documentation while preserving the familiar endpoint paths as display
+    text.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+M	schema/draft/schema.json
+M	schema/draft/schema.ts
+
+commit c8a1610656714523e99993d3e07427bb32324ef0
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Wed Dec 24 11:48:54 2025 -0600
+
+    Expose more base types in schema reference page
+    
+    Change `RequestParams`, `PaginatedRequestParams`, and
+    `NotificationParams` from `@internal` to `@category Common Types` so
+    they appear in the generated schema reference. Previously these types
+    were referenced by other types but couldn't be clicked or inspected,
+    creating documentation holes.
+    
+    Also standardizes terminology for Common Types:
+    
+    - "parameters" → "params" for consistency
+    - "response" → "result" in `EmptyResult` description
+    - Adds missing description for `Result` type
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+M	schema/draft/schema.json
+M	schema/draft/schema.ts
+
+commit 59c191cebab706cb3e210147e1d962c73ee42cb0
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Mon Dec 22 10:56:22 2025 -0600
+
+    Wrap method names, parameters, and string literals in backticks
+    
+    Format TSDoc comments to use inline code styling for:
+    
+    - Method/endpoint names like `tasks/result`, `resources/list`
+    - Parameter names like `includeContext`, `toolChoice`
+    - String literal values like `"forbidden"`, `"optional"`
+    - Type self-references like `ToolAnnotations`
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+M	schema/draft/schema.json
+M	schema/draft/schema.ts
+
+commit 49019a5fa85918dfc97ad6664af8f1422b584948
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Mon Dec 22 10:52:57 2025 -0600
+
+    Link type references in `schema.ts`
+    
+    Adds `{@link}` syntax to type references in order to make them navigable
+    in generated documentation.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/schema.mdx
+M	schema/draft/schema.json
+M	schema/draft/schema.ts
+
+commit a815d7756bb8e52a85a12a21bcab908dbcda6bc3
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Tue Dec 23 13:31:36 2025 -0600
+
+    Use `source-order` sort strategy in TypeDoc config
+    
+    This preserves the field order as written in the TypeScript source files
+    instead of alphabetizing them, making the schema reference page
+    consistent with `schema.ts`.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/2025-06-18/schema.mdx
+M	docs/specification/2025-11-25/schema.mdx
+M	docs/specification/draft/schema.mdx
+
+commit a018786c81d5a513f040112f2a444c83cf52221d
+Author: Mike Kistler <mikekistler@microsoft.com>
+Date:   Tue Dec 30 11:32:58 2025 -0600
+
+    Fix protocolVersion values in initialize messages
+
+M	docs/specification/2025-06-18/basic/lifecycle.mdx
+M	docs/specification/2025-11-25/basic/lifecycle.mdx
+M	docs/specification/draft/basic/lifecycle.mdx
+
+commit aec2ab75d96fdd79394fbe92cd09da9de4c325e4
+Author: Loganaden Velvindron <logan@cyberstorm.mu>
+Date:   Tue Dec 30 08:21:15 2025 +0400
+
+    Better wording from @olaservo
+    
+    Co-authored-by: Ola Hungerford <olahungerford@gmail.com>
+
+M	docs/specification/draft/basic/security_best_practices.mdx
+
+commit 95c398cff4317f6819e76cfc2ba516e60afe9429
+Author: Loganaden Velvindron <logan@cyberstorm.mu>
+Date:   Wed Dec 24 14:29:34 2025 +0400
+
+    Add note on updating sandbox technologies
+    
+    Emphasize the importance of updating sandbox technologies to mitigate vulnerabilities. This is a good example: https://github.com/advisories/GHSA-9gqj-5w7c-vx47
+
+M	docs/specification/draft/basic/security_best_practices.mdx
+
+commit 941c1380599dc9fbd6a80ea4f4acdb8a0bd371ca
+Author: He-Pin <hepin1989@gmail.com>
+Date:   Tue Dec 23 10:46:45 2025 +0800
+
+    chore: Add CreateTaskResult to ServerResult
+
+M	schema/draft/schema.json
+M	schema/draft/schema.ts
+
+commit 01a6ceb95a24153ae9129b70344eb0e1f7e1649b
+Author: Pamela Fox <pamelafox@microsoft.com>
+Date:   Mon Dec 15 16:59:00 2025 +0000
+
+    Make same fix in draft as well
+
+M	docs/specification/draft/basic/security_best_practices.mdx
+
+commit 92004a0ab7b12397a3689b89d84e790e4c21f907
+Author: Pamela Fox <pamelafox@microsoft.com>
+Date:   Sat Dec 13 22:19:38 2025 -0800
+
+    Fix link to MCP Authorization specification
+    
+    Updated link in security best practices document, removing the "mdx".
+
+M	docs/specification/2025-11-25/basic/security_best_practices.mdx
+
+commit 73eb07d150a1c2520dc1ac2f274360c30bd7f51f
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Fri Dec 12 14:10:29 2025 -0600
+
+    Format tool name examples as inline code
+    
+    Add backticks around example tool names in the Tool Names section
+    for consistent code formatting.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/draft/server/tools.mdx
+
+commit 9593b9bf043c868cbba1188aeded31bd3a7d3bb9
+Author: Abdelkader Boudih <terminale@gmail.com>
+Date:   Thu Dec 11 05:16:15 2025 +0100
+
+    fix: grammar correction in resources documentation
+    
+    Fixed typo "This list not" → "This list is not" in draft specification
+    
+    Co-authored-by: Claude <noreply@anthropic.com>
+
+M	docs/specification/draft/server/resources.mdx
+
+commit af8b19a3e6fc4b465f6a931134785ed7834ea50f
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Fri Dec 12 09:07:03 2025 -0600
+
+    Add icons property to Data Types sections in specification docs
+    
+    The icons property was already shown in JSON examples but was missing
+    from the formal Data Types documentation for Prompt, Resource, and Tool.
+    
+    Fixes #1967
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
+
+M	docs/specification/2025-11-25/server/prompts.mdx
+M	docs/specification/2025-11-25/server/resources.mdx
+M	docs/specification/2025-11-25/server/tools.mdx
+M	docs/specification/draft/server/prompts.mdx
+M	docs/specification/draft/server/resources.mdx
+M	docs/specification/draft/server/tools.mdx
+
+commit c8e6869755cc91d5afd1f6bb63bc453d34a01416
+Author: Koichi ITO <koic.ito@gmail.com>
+Date:   Fri Dec 12 16:27:23 2025 +0900
+
+    [Docs] Add `theme` to `icons` in Base Protocol Overview
+    
+    This PR adds `theme` to `icons` in Base Protocol Overview.
+    This keeps the wording consistent with the Schema Reference:
+    https://modelcontextprotocol.io/specification/2025-11-25/schema#icon
+    
+    Resolves #1964.
+
+M	docs/specification/2025-11-25/basic/index.mdx
+M	docs/specification/draft/basic/index.mdx
+
+commit 5e463a219b5b8ed7d85b6ec46f24358c712dede3
+Author: Stephen Toub <stoub@microsoft.com>
+Date:   Sun Dec 7 21:51:35 2025 -0500
+
+    Clarify that empty cursors are valid cursors
+
+M	docs/specification/draft/server/utilities/pagination.mdx
+
+commit 601115bfc814280873ce7e6aabe7045c7955fe69
+Author: Luca Chang <lucalc@amazon.com>
+Date:   Thu Dec 4 14:38:20 2025 -0800
+
+    Mention Tool.execution in tools.mdx
+
+M	docs/specification/2025-11-25/server/tools.mdx
+M	docs/specification/draft/server/tools.mdx
+
+commit 74934d5a9b57e8732570c382a04fb9d95dd9796e
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Wed Dec 3 17:00:44 2025 -0600
+
+    Fix protocol version in Versioning page (#1910)
+    
+    This updates the current protocol version link text to match the URL,
+    and uses the `/specification/latest` wildcard redirect for the
+    initialization phase link.
+    
+    Co-authored-by: David Soria Parra <167242713+dsp-ant@users.noreply.github.com>
+
+M	docs/specification/versioning.mdx
+
+commit 35fa160caf287a9c48696e3ae452c0645c713669
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Tue Dec 2 17:40:07 2025 +0000
+
+    Correct LATEST_PROTOCOL_VERSION
+
+M	schema/2025-11-25/schema.ts
+M	schema/draft/schema.ts
+
+commit 99e7879ebc4c2618d2bc9bbb1a63a7f7929d5855
+Author: Felix Weinberger <3823880+felixweinberger@users.noreply.github.com>
+Date:   Tue Dec 2 18:49:20 2025 +0000
+
+    docs: update version references to 2025-11-25 and use /specification/latest/ (#1922)
+
+M	docs/specification/versioning.mdx
+
+commit 391c69f42f21bab3a5df0923b45b9ad3174414b9
+Author: Daniel Tseng <s92f002@gmail.com>
+Date:   Tue Dec 2 03:39:45 2025 +0800
+
+    docs: change heading level for 'icons' section (#1914)
+    
+    * fix(docs): change heading level for 'icons' section
+    
+    Updated heading level for 'icons' section in documentation.
+    
+    * fix(docs): change heading level for 'icons' section
+
+M	docs/specification/2025-11-25/basic/index.mdx
+M	docs/specification/draft/basic/index.mdx
+
+commit 80aefdf914db311249dcdc7fb39a6246fcf1ae8d
+Author: David Soria Parra <167242713+dsp-ant@users.noreply.github.com>
+Date:   Fri Nov 28 18:11:42 2025 +0300
+
+    Add blog post announcing SEP process migration to PRs (#1851)
+    
+    * Blog post on SEP-1850
+    
+    * format
+    
+    * Polish blog post copy for clarity
+    
+    - Remove casual "back in" phrasing
+    - Clarify dual numbering issue
+    - Simplify commit instructions for less experienced Git users
+    - Add guidance on preserving discussion history during migration
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude <noreply@anthropic.com>
+    
+    ---------
+    
+    Co-authored-by: Claude <noreply@anthropic.com>
+
+M	seps/1850-pr-based-sep-workflow.md
+
+commit b1daf5d230fd7ff6a87fd8cbed2bf912a246c823
+Author: David Soria Parra <167242713+dsp-ant@users.noreply.github.com>
+Date:   Fri Nov 28 14:38:25 2025 +0000
+
+    Update 1850-pr-based-sep-workflow.md
+
+M	seps/1850-pr-based-sep-workflow.md
+
+commit 4d19a92dbcf26b741c4ce71fa2ca316cb853d7f9
+Author: David Soria Parra <167242713+dsp-ant@users.noreply.github.com>
+Date:   Fri Nov 28 17:33:09 2025 +0300
+
+    SEP-1850: Migrate SEP process from issues to pull requests (#1850)
+    
+    * Migrate SEP process from issues to pull requests
+    
+    This change updates the SEP (Specification Enhancement Proposal) process
+    to use pull requests instead of GitHub issues, inspired by Python's PEP
+    process. Key changes:
+    
+    - SEPs are now submitted as PRs to the seps/ directory (not as issues)
+    - SEP number = PR number (authors amend commit after PR creation)
+    - All discussion happens in the PR, providing a single place for review
+    - Sponsors are responsible for updating status in the markdown file
+    - Full version history maintained via git
+    
+    Benefits:
+    - Proper versioning history for all proposal changes
+    - Single location for discussion (the PR itself)
+    - Clear traceability between proposal and review process
+    - Eliminates need for manual number assignment
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude <noreply@anthropic.com>
+    
+    * Add PR labels requirement for SEP status management
+    
+    Per pcarleton's feedback, sponsors should apply matching labels to PRs
+    in addition to updating the Status field in the markdown file. This
+    makes it easier to filter and search for SEPs by status.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude <noreply@anthropic.com>
+    
+    * Add SEP-1850 and SEP template
+    
+    Add SEP-1850 documenting the PR-based SEP workflow and a template file for future SEP authors. The SEP formalizes the process of using PR numbers, markdown files in seps/ directory, sponsor responsibilities including status management via PR labels, and the dormant status for unsponsored proposals.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude <noreply@anthropic.com>
+    
+    * format
+    
+    * Address review feedback on SEP workflow
+    
+    - Change PR field to full URL for clickable links
+    - Reword sponsor responsibilities to not imply write access requirement
+    - Clarify that authors coordinate status changes with sponsors
+    - Reduce README duplication by referencing TEMPLATE.md
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude <noreply@anthropic.com>
+    
+    * dont duplicate the wording
+    
+    * Add SEP workflow process changes to draft changelog
+    
+    Document the formalized PR-based SEP workflow including markdown files
+    in seps/ directory, PR-derived numbering, sponsor responsibilities,
+    and status management via PR labels.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude <noreply@anthropic.com>
+    
+    ---------
+    
+    Co-authored-by: Claude <noreply@anthropic.com>
+
+M	docs/specification/draft/changelog.mdx
+A	seps/1850-pr-based-sep-workflow.md
+M	seps/README.md
+A	seps/TEMPLATE.md
+
+commit d88c2d8714a32bec1be6458b9220119b9b933183
+Author: David Anderson <david@misplaced.us>
+Date:   Wed Nov 26 06:07:49 2025 -0700
+
+    docs: Update specification page to point to latest version
+    
+    docs: Update specification page to point to latest version
+
+M	docs/specification/versioning.mdx
+
+commit db334187b4a7dacd964d7bf36a9a65b8af3706cd
+Author: adam jones <domdomegg+git@gmail.com>
+Date:   Wed Nov 26 13:07:00 2025 +0000
+
+    Fix Prettier formatting in prompts.mdx (#1907)
+
+M	docs/specification/2025-11-25/server/prompts.mdx
+
+commit ef175d72115b25f0a0e89dd52f40442761b6a380
+Author: David Soria Parra <davidsp@anthropic.com>
+Date:   Wed Nov 26 00:25:48 2025 +0300
+
+    fixes
+
+M	docs/specification/2025-11-25/basic/transports.mdx
+M	docs/specification/2025-11-25/server/prompts.mdx
+
+commit 40f50ed5df37d9ee4cb90d40c9a9b3e5f91e3267
+Author: Den Delimarsky <53200638+localden@users.noreply.github.com>
+Date:   Tue Nov 25 13:06:46 2025 -0800
+
+    Add 2025-11-25 MCP specification (#1887)
+    
+    * Add 2025-11-25 MCP specification
+    
+    Introduces the initial draft of the Model Context Protocol (MCP) specification for 2025-11-25, including architecture, basic protocol overview, authorization, lifecycle, security best practices, transports, utilities, client and server features, changelog, and schema files. This update provides comprehensive documentation and schema definitions for the new protocol version.
+    
+    * Update JSON schema to draft-07 and refactor $defs
+    
+    Changed the JSON schema version from draft/2020-12 to draft-07 and replaced all instances of "$defs" with "definitions". Updated all internal $ref pointers accordingly and fixed documentation links to reference the correct specification version. This improves compatibility and aligns with draft-07 conventions.
+    
+    * Add documentation for 2025-11-25 specification version
+    
+    Introduces a new documentation entry for the 2025-11-25 specification version, including updated page structure for base protocol, client features, server features, and schema. The previous version (2025-06-18) remains available.
+    
+    * Update specification links to correct versioned paths
+    
+    Fixed internal documentation links in CompleteRequestParams, ElicitRequestFormParams, and ElicitRequestURLParams to reference /specification/2025-11-25/basic/index instead of the draft path. This ensures links point to the correct versioned specification for improved navigation and accuracy.
+    
+    * Update links and simplify schema documentation
+    
+    Changed internal documentation links to reference the correct 2025-11-25 specification paths. The schema.mdx file was significantly condensed, removing detailed type/interface documentation and leaving only category headers for JSON-RPC, Common Types, and Content.
+    
+    * Update internal documentation links to new versioned paths
+    
+    Replaced references to '/specification/draft/' with '/specification/2025-11-25/' throughout documentation files to ensure all internal links point to the correct versioned specification. This improves navigation accuracy and maintains consistency as the documentation evolves.
+    
+    * Update _meta doc links to 2025-11-25 specification
+    
+    Changed documentation links for the _meta field in multiple interfaces to reference the 2025-11-25 specification instead of the draft version. This ensures consistency and accuracy with the current schema version.
+    
+    * Update _meta description links to 2025-11-25 spec
+    
+    Changed all references in _meta field descriptions from the draft specification to the 2025-11-25 version for consistency and accuracy in schema documentation.
+    
+    * Expand schema documentation with detailed type definitions
+    
+    Added comprehensive interface and type alias documentation for JSON-RPC, common types, and content blocks. This update provides explicit definitions and descriptions for objects such as JSONRPCError, JSONRPCMessage, Annotations, Icon, ContentBlock, and more, improving clarity and usability for implementers.
+    
+    * Refactor schema.mdx to use category comments
+    
+    Replaces detailed type/interface documentation with category comments for JSON-RPC and Common Types sections. This change streamlines the schema reference and prepares the file for a new documentation structure.
+    
+    * Update documentation links to 2025-11-25 version
+    
+    Replaces outdated 'draft' and schema links with references to the 2025-11-25 version throughout the basic specification docs. Ensures all internal and external documentation URLs point to the correct versioned resources for consistency and accuracy.
+    
+    * Update schema.mdx
+    
+    * Format Base Protocol Card for readability
+    
+    Reformatted the Base Protocol Card component to use multiline props for improved readability and consistency with other Card components.
+    
+    * Refine formatting in server docs and lifecycle table
+    
+    Improved table alignment in lifecycle.mdx, updated Card component formatting in server/index.mdx, and clarified annotation note formatting in server/tools.mdx for better readability and consistency.
+    
+    * Clarify token and session ID handling requirements
+    
+    Updated authorization spec to state MCP servers, not authorization servers, must only accept valid tokens for their resources. Added requirement for clients to securely handle session IDs, referencing session hijacking mitigations.
+    
+    * Update changelog.mdx
+    
+    * Clarify documentation for MCP protocol specification
+    
+    Improves clarity and consistency in the MCP protocol documentation. Updates include refined descriptions for authorization client information prompts, result and error response handling, stdio and HTTP transport session headers, and resource template discovery. Also enhances annotation notes in tool results for better readability.
+    
+    * Reformat Note block for improved readability
+    
+    Adjusted line breaks in the Note block to enhance clarity and maintain consistent formatting in the documentation.
+    
+    * Update scripts/generate-schemas.ts
+    
+    Co-authored-by: Paul Carleton <paulcarletonjr@gmail.com>
+    
+    * Update generate-schemas.ts
+    
+    * Update schema to JSON Schema 2020-12 and use $defs
+    
+    Migrated the schema from draft-07 to draft 2020-12, replacing 'definitions' with '$defs' and updating all $ref paths accordingly. This modernizes the schema and ensures compatibility with the latest JSON Schema standards.
+    
+    * Refactor JSON-RPC response types and schema
+    
+    Renamed JSONRPCError to JSONRPCErrorResponse and JSONRPCResponse to JSONRPCResultResponse for clarity. Updated schema definitions and TypeScript types to reflect these changes, making the error response id optional and introducing a union type for JSONRPCResponse. Also updated protocol version constant.
+    
+    * fix tasks
+    
+    * Fix Protocol Revision labels in 2025-11-25 docs
+    
+    Update all Protocol Revision info boxes from "draft" to "2025-11-25" to correctly reflect the specification version.
+    
+    🤖 Generated with [Claude Code](https://claude.com/claude-code)
+    
+    Co-Authored-By: Claude <noreply@anthropic.com>
+    
+    * fix emphasis on keywords
+    
+    * Update README.md
+    
+    * Update README.md
+    
+    ---------
+    
+    Co-authored-by: Paul Carleton <paulcarletonjr@gmail.com>
+    Co-authored-by: David Soria Parra <davidsp@anthropic.com>
+    Co-authored-by: Claude <noreply@anthropic.com>
+
+A	docs/specification/2025-11-25/architecture/index.mdx
+A	docs/specification/2025-11-25/basic/authorization.mdx
+A	docs/specification/2025-11-25/basic/index.mdx
+A	docs/specification/2025-11-25/basic/lifecycle.mdx
+A	docs/specification/2025-11-25/basic/security_best_practices.mdx
+A	docs/specification/2025-11-25/basic/transports.mdx
+A	docs/specification/2025-11-25/basic/utilities/cancellation.mdx
+A	docs/specification/2025-11-25/basic/utilities/ping.mdx
+A	docs/specification/2025-11-25/basic/utilities/progress.mdx
+A	docs/specification/2025-11-25/basic/utilities/tasks.mdx
+A	docs/specification/2025-11-25/changelog.mdx
+A	docs/specification/2025-11-25/client/elicitation.mdx
+A	docs/specification/2025-11-25/client/roots.mdx
+A	docs/specification/2025-11-25/client/sampling.mdx
+A	docs/specification/2025-11-25/index.mdx
+A	docs/specification/2025-11-25/schema.mdx
+A	docs/specification/2025-11-25/server/index.mdx
+A	docs/specification/2025-11-25/server/prompts.mdx
+A	docs/specification/2025-11-25/server/resource-picker.png
+A	docs/specification/2025-11-25/server/resources.mdx
+A	docs/specification/2025-11-25/server/slash-command.png
+A	docs/specification/2025-11-25/server/tools.mdx
+A	docs/specification/2025-11-25/server/utilities/completion.mdx
+A	docs/specification/2025-11-25/server/utilities/logging.mdx
+A	docs/specification/2025-11-25/server/utilities/pagination.mdx
+M	docs/specification/draft/changelog.mdx
+M	docs/specification/draft/server/tools.mdx
+A	schema/2025-11-25/schema.json
+A	schema/2025-11-25/schema.mdx
+A	schema/2025-11-25/schema.ts
+
+commit 21848235bec65e87e677d732c3900176f4685403
+Author: Jonathan Hefner <jonathan@hefner.pro>
+Date:   Thu Jun 19 15:59:51 2025 -0500
+
+    Mention fetching `https://` resources
+    
+    The "Reading Resources" sections of both `concepts/resources.mdx` (in
+    the User Guide) and `server/resources.mdx` (in the Specification) only
+    mention reading resources via `resources/read`.  However, the "Common
+    URI Schemes" section of `server/resources.mdx` mentions that a client
+    may fetch a resource directly from web if the resource URI has an
+    `https://` scheme.  Fetching the resource directly can have performance
+    benefits, so it's worth calling more attention to this provision.
+    
+    This commit adds mention of the provision to both "Reading Resources"
+    sections.
+
+M	docs/specification/draft/server/resources.mdx
