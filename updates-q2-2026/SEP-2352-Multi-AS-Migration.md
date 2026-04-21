@@ -37,9 +37,12 @@ Because the Auth Server fetches the metadata dynamically on demand, no re-regist
 
 When an MCP server supports multiple Authorization Servers (e.g., during a migration), its Protected Resource Metadata lists them all in the `authorization_servers` array:
 
-```json
-GET https://api.internal.com/.well-known/oauth-protected-resource
+```http
+GET /.well-known/oauth-protected-resource HTTP/1.1
+Host: api.internal.com
+```
 
+```json
 {
   "resource": "https://api.internal.com",
   "authorization_servers": [

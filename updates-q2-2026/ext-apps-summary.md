@@ -59,15 +59,17 @@ When the LLM calls `visualize_sales`, the host does two things simultaneously:
 **3. Host renders the iframe and injects data:**
 The host renders the fetched HTML in a sandboxed `iframe`, then sends the `ui/initialize` message to the app. The app and host communicate via JSON-RPC 2.0 over `postMessage`:
 
+Host → iframe (via `postMessage`): lifecycle initialization
 ```json
-// Host → iframe (via postMessage): lifecycle initialization
 {
   "jsonrpc": "2.0",
   "method": "ui/initialize",
-  "params": { ... }
+  "params": { }
 }
+```
 
-// iframe → Host: confirms ready
+iframe → Host: confirms ready
+```json
 {
   "jsonrpc": "2.0",
   "method": "ui/notifications/initialized"

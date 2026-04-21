@@ -63,16 +63,19 @@ WWW-Authenticate: Bearer resource_metadata="https://mcp.example.com/.well-known/
 
 **2. Client discovers AS supports `offline_access`:**
 Before augmenting, the client fetches the Authorization Server's metadata and checks whether `offline_access` appears in `scopes_supported`:
-```json
-GET https://auth.example.com/.well-known/oauth-authorization-server
 
+```http
+GET /.well-known/oauth-authorization-server HTTP/1.1
+Host: auth.example.com
+```
+
+```json
 {
   "issuer": "https://auth.example.com",
   "authorization_endpoint": "https://auth.example.com/authorize",
   "token_endpoint": "https://auth.example.com/token",
   "scopes_supported": ["read:database", "write:database", "offline_access"],
-  "grant_types_supported": ["authorization_code", "refresh_token"],
-  ...
+  "grant_types_supported": ["authorization_code", "refresh_token"]
 }
 ```
 The client sees `"offline_access"` in `scopes_supported` — this means the AS recognizes the OIDC convention. Because the client is a desktop app capable of securely storing secrets, it decides to augment.

@@ -29,7 +29,9 @@ Scope accumulation across operations is now explicitly a **client-side responsib
 * The client then initiates the re-authorization flow asking the Auth Server for the combined set (`files:read files:write`).
 
 ### 3. Reducing Step-Up Round Trips
-The spec's **recommended approach** is for servers to include the operation's scopes along with related scopes that commonly work together. This reduces the number of step-up authorization rounds. For example, if a `save_document` tool requires both `files:write` and `user:profile`, the server should return `scope="files:write user:profile"` in a single challenge rather than requiring separate step-up flows for each scope.
+Regardless of which approach (minimum, recommended, or extended) a server chooses, it **SHOULD** include all scopes required for the current operation in a single challenge. Challenging incrementally — returning one missing scope, then another on the subsequent retry — forces multiple authorization round-trips for a single operation and degrades user experience.
+
+The spec's **recommended approach** goes further: servers include the operation's scopes along with related scopes that commonly work together, reducing round trips across *related* operations. For example, if a `save_document` tool requires both `files:write` and `user:profile`, the server should return `scope="files:write user:profile"` in a single challenge rather than requiring separate step-up flows for each scope.
 
 ## Concrete Example
 
@@ -38,10 +40,11 @@ Here is how the interaction works under the new SEP-2350 rules:
 **1. The Client makes a request with limited scopes:**
 The client currently holds a token with `files:read`. It attempts to execute a tool that requires writing.
 ```http
-POST /mcp/tools/call HTTP/1.1
+POST /mcp HTTP/1.1
 Authorization: Bearer <token_with_read_only>
+Content-Type: application/json
 
-{"method": "tools/call", "params": {"name": "save_document"}}
+{"jsonrpc": "2.0", "id": 1, "method": "tools/call", "params": {"name": "save_document"}}
 ```
 
 **2. The Server issues a stateless challenge:**
@@ -93,4 +96,4 @@ At each step, the server only tells the client what *that specific operation* ne
 
 Some enterprise Authorization Servers define scope hierarchies (e.g., an `admin` scope automatically implies `read` and `write`). 
 
-SEP-2350 explicitly notes that clients **do not need to deduplicate** hierarchically. If a client currently has an `admin` scope, and a tool throws a 403 asking for a `read` scope, the client simply computes the raw string union (`scope=admin read`) and sends it to the Auth Server. The Auth Server is responsible for normalizing that redundancy during token issuance. This keeps client implementation simple and logic-free.
+SEP-2350 explicitly notes that clients **do not need to deduplicate** hierarchically. If a client currently has an `admin` scope, and a tool throws a 403 asking for a `read` scope, the client simply computes the raw string union (`scope=admin read`) and sends it to the Auth Server. Authorization servers typically normalize such redundancy during token issuance. This keeps client implementation simple and logic-free.
