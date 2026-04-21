@@ -2,6 +2,14 @@
 
 The upcoming release of the Model Context Protocol (MCP) introduces significant enhancements aimed at extending protocol capabilities, formalizing HTTP transport behaviors, improving client-server synchronization, and strengthening authorization flows. Below is a comprehensive summary of the updates going into the next release.
 
+All SEPs are here: 
+
+https://modelcontextprotocol.io/seps
+
+The MCP release plan with relevant SEPs is here:
+
+https://plan.modelcontextprotocol.io
+
 ## 1. Core Protocol & Schema Additions
 
 ### Extensions Framework (SEP-2133)
