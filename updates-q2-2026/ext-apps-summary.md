@@ -28,6 +28,54 @@ Because the host client must explicitly orchestrate fetching the UI (`resources/
 
 If an MCP server with App-enabled tools connects to a client that _doesn't_ support `ext-apps` (like a basic CLI), it degrades gracefully. The client simply ignores the `_meta.ui` field, executes the standard tool call, and renders the raw text/JSON result as usual.
 
+## Concrete Example: Tool with UI
+
+**1. Server declares a tool with a UI resource:**
+The tool definition includes `_meta.ui.resourceUri` pointing to an HTML application hosted by the server:
+
+```json
+{
+  "name": "visualize_sales",
+  "description": "Generates an interactive sales dashboard",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "quarter": { "type": "string" }
+    }
+  },
+  "_meta": {
+    "ui": {
+      "resourceUri": "ui://dashboard/sales"
+    }
+  }
+}
+```
+
+**2. Host orchestrates the tool call and UI fetch in parallel:**
+When the LLM calls `visualize_sales`, the host does two things simultaneously:
+- Executes `tools/call` to get the JSON result data from the server
+- Fetches the SPA bundle via `resources/read` using the `ui://dashboard/sales` URI
+
+**3. Host renders the iframe and injects data:**
+The host renders the fetched HTML in a sandboxed `iframe`, then sends the `ui/initialize` message to the app. The app and host communicate via JSON-RPC 2.0 over `postMessage`:
+
+```json
+// Host → iframe (via postMessage): lifecycle initialization
+{
+  "jsonrpc": "2.0",
+  "method": "ui/initialize",
+  "params": { ... }
+}
+
+// iframe → Host: confirms ready
+{
+  "jsonrpc": "2.0",
+  "method": "ui/notifications/initialized"
+}
+```
+
+Once initialized, the host pushes the tool result data into the running SPA. The app renders the interactive dashboard. From this point, the app can call tools on the server (routed through the host) and the host can push updated data into the app.
+
 ## Common Use Cases
 
 - Exploring complex data (e.g., interactive maps, 3D globes, data heatmaps).

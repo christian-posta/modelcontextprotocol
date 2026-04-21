@@ -61,8 +61,24 @@ WWW-Authenticate: Bearer resource_metadata="https://mcp.example.com/.well-known/
                          scope="read:database"
 ```
 
-**2. Client Authorization Request (Augmented):**
-The client receives the 401. Because the client is a desktop app capable of securely storing secrets, it dynamically appends `offline_access` to the URL before opening the user's browser to the Auth Server.
+**2. Client discovers AS supports `offline_access`:**
+Before augmenting, the client fetches the Authorization Server's metadata and checks whether `offline_access` appears in `scopes_supported`:
+```json
+GET https://auth.example.com/.well-known/oauth-authorization-server
+
+{
+  "issuer": "https://auth.example.com",
+  "authorization_endpoint": "https://auth.example.com/authorize",
+  "token_endpoint": "https://auth.example.com/token",
+  "scopes_supported": ["read:database", "write:database", "offline_access"],
+  "grant_types_supported": ["authorization_code", "refresh_token"],
+  ...
+}
+```
+The client sees `"offline_access"` in `scopes_supported` — this means the AS recognizes the OIDC convention. Because the client is a desktop app capable of securely storing secrets, it decides to augment.
+
+**3. Client Authorization Request (Augmented):**
+The client dynamically appends `offline_access` to the scopes from the resource server's 401 before opening the user's browser:
 ```http
 GET /authorize?
   response_type=code&
@@ -70,6 +86,8 @@ GET /authorize?
   scope=read:database offline_access&
   redirect_uri=...
 ```
+
+If the AS metadata had *not* included `offline_access` in `scopes_supported`, the client would skip augmentation and send only `scope=read:database`. The AS might still issue a refresh token based on its own policies and the client's `grant_types` metadata — but the client **MUST NOT** assume this will happen.
 
 ## How Clients Advertise Support (CIMD Example)
 
@@ -99,31 +117,6 @@ Here is an example of an MCP Client's metadata document (`https://app.example.co
 Notice `token_endpoint_auth_method: "none"`. This explicitly flags the client as a **Public Client** (meaning it has no `client_secret`). Because `refresh_token` is listed in the `grant_types`, the Auth Server sees this document and knows: *"This is a public client requesting refresh tokens. I must ensure Refresh Token Rotation is enforced before I issue one."*
 
 ## Security Implications: Public Clients & PKCE
-
-Because the Authorization Server must decide whether it is safe to issue a refresh token, the client must explicitly declare that it wants them and knows how to handle them. 
-
-For clients that use **Client ID Metadata Documents (CIMD)** (a method where the client hosts a JSON file containing its own OAuth configuration), the client advertises this support by adding `refresh_token` to its `grant_types` array.
-
-Here is an example of an MCP Client's metadata document (`https://app.example.com/oauth/metadata.json`):
-
-```json
-{
-  "client_id": "https://app.example.com/oauth/metadata.json",
-  "client_name": "Example AI Client",
-  "client_uri": "https://app.example.com",
-  "redirect_uris": [
-    "http://127.0.0.1:3000/callback"
-  ],
-  "grant_types": [
-    "authorization_code",
-    "refresh_token" 
-  ],
-  "response_types": ["code"],
-  "token_endpoint_auth_method": "none"
-}
-```
-
-Notice `token_endpoint_auth_method: "none"`. This explicitly flags the client as a **Public Client** (meaning it has no `client_secret`). Because `refresh_token` is listed in the `grant_types`, the Auth Server sees this document and knows: *"This is a public client requesting refresh tokens. I must ensure Refresh Token Rotation is enforced before I issue one."*
 
 The separation of concerns in SEP-2207 is complemented by the broader MCP auth spec's handling of **OAuth Public Clients**.
 
