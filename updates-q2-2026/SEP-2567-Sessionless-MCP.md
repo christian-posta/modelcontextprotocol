@@ -22,15 +22,15 @@ Furthermore, because tools *might* change based on session state, clients were f
 
 To fix this, SEP-2567 removes the session crutch and forces developers to manage state explicitly.
 
-1. **Abolish Session Primitives:** `session/create`, `session/destroy`, and the `Mcp-Session-Id` HTTP header are completely removed from the protocol.
-2. **Cacheable List Endpoints:** Endpoints like `tools/list`, `resources/list`, and `prompts/list` **MUST NOT** depend on per-connection or prior-tool-call state. Because they are now fully static, clients can cache the tool list globally at the deployment/auth level.
-3. **Explicit State Handles:** Application state must now be managed through explicit identifiers passed back and forth between the client and server.
+1. **Abolish Sessions:** The `Mcp-Session-Id` HTTP header is removed and all spec language describing session lifecycle and session-scoped behavior is deleted. The protocol is sessionless at every layer.
+2. **Session-Independent List Endpoints:** With no session concept, the results of `tools/list`, `resources/list`, and `prompts/list` no longer have a per-session or per-connection scope to depend on. Lists can still change for other reasons (server deployment, auth changes); caching and invalidation mechanics are specified separately in SEP-2549 (server-advertised TTL + `notifications/*/list_changed`).
+3. **Explicit State Handles (Guidance, Not Protocol):** The SEP recommends that servers manage cross-call state through explicit identifiers (e.g., `basket_id`) returned from creation tools and threaded through subsequent calls. This is a **tool-design pattern** the spec documents and recommends — there is no `handles/*` method, no handle type in the schema, and no wire-level concept of a handle.
 
 ## Concrete Example: Managing Application State
 
 Imagine an MCP Server that manages an e-commerce shopping cart. Here is how it changes.
 
-### ❌ Old Session-Scoped Model
+### Old Session-Scoped Model
 The server relies on the hidden `Mcp-Session-Id` header to know whose cart is whose. If the client is ChatGPT (which closes the session immediately), the cart is instantly lost.
 
 **Tool Call 1 (Create Cart):**
@@ -39,23 +39,29 @@ The AI calls `add_item(item="laptop")`. The server looks at the session ID, crea
 **Tool Call 2 (Checkout):**
 The AI calls `checkout()`. The server looks at the session ID, finds the cart, and processes it. 
 
-### ✅ New Explicit Handle Model
+### New Explicit Handle Model
 The server explicitly mints a handle (an ID) and forces the AI model to hold onto it. The AI decides how long that handle should live (e.g., across an entire conversation thread).
 
 **Tool Call 1 (Create Cart):**
-The AI calls the `create_basket()` tool. The server creates a database record and returns a string identifier.
-* **Server returns:** `"basket_id_99283"`
+The AI calls the `create_basket()` tool. The server creates a database record and returns an opaque identifier in both a human-readable `content` field and a machine-readable `structuredContent` field.
+* **Server returns:**
+```jsonc
+{ "content": [{ "type": "text", "text": "Created basket bsk_a1b2c3" }],
+  "structuredContent": { "basket_id": "bsk_a1b2c3" } }
+```
 
 **Tool Call 2 (Add Item):**
 The AI calls `add_item()`, but now it must explicitly thread the handle back to the server.
 ```json
 {
+  "jsonrpc": "2.0",
+  "id": 1,
   "method": "tools/call",
   "params": {
     "name": "add_item",
     "arguments": {
-      "basket_id": "basket_id_99283",
-      "item": "laptop"
+      "basket_id": "bsk_a1b2c3",
+      "sku": "shoes"
     }
   }
 }
@@ -63,7 +69,7 @@ The AI calls `add_item()`, but now it must explicitly thread the handle back to 
 
 ## Why this matters
 
-By forcing state into explicit handles, the protocol achieves three massive benefits:
-1. **Cacheability:** The list of tools never changes based on user actions, so `tools/list` can be fetched once and cached indefinitely by the client.
-2. **Predictability:** Server authors no longer have to guess what a "session" means. State lives exactly as long as the AI model remembers the handle and chooses to pass it.
-3. **Agent Orchestration:** It solves strict cardinality constraints. Previously, one connection meant exactly one session. Now, a master AI orchestrator can spin up three different sub-agents, pass them all the same `basket_id` so they can share a cart, but give them different `browser_id`s so their web-scraping state is isolated.
+By removing sessions and recommending explicit handles, the protocol achieves three key benefits:
+1. **Cacheability:** `tools/list` results no longer vary per session, so clients can cache them at the deployment/auth level and invalidate via TTL or `notifications/*/list_changed` (per SEP-2549). This eliminates the `O(subagents x servers)` re-fetch cost the SEP identifies.
+2. **Predictability:** Server authors no longer have to guess what a "session" means. Handle lifetime is determined by the server's documented durability policy (e.g., "baskets expire after 24h idle") and the model's ability to thread the handle through calls.
+3. **Agent Orchestration:** It solves strict cardinality constraints. With sessions, one connection meant exactly one scope. Now, a master AI orchestrator can spin up three different sub-agents, pass them all the same `basket_id` so they can share a cart, but give them different `browser_id`s so their web-scraping state is isolated.
