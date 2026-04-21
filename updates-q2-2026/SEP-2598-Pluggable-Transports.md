@@ -28,17 +28,18 @@ Historically, custom transports were forced to use the exact JSON-RPC wire forma
 
 In exchange for this flexibility, the custom transport **MUST** publish a bidirectional mapping back to JSON-RPC so that generic translating proxies can bridge the custom transport back to standard MCP traffic if necessary.
 
-## Concrete Example: Connecting via a Pluggable Transport
+## Concrete Examples: Server-Side Deployment
 
-Here is how a developer's experience changes under the Pluggable Transports model.
+Under the Pluggable Transports model, there are two primary ways a custom transport (like WebSockets) is deployed on the server side: **Native Implementation** or **Proxy Bridging**.
 
-Instead of waiting for the core team to merge WebSocket support into the official Python SDK, the community builds a compliant transport package. The developer installs both the core SDK and the plugin, and simply injects the plugin into the client at construction time — the session layer is unaware of which transport is in use.
+### Scenario A: Native End-to-End (Client & Server Support)
 
-> **Note:** The SEP's reference implementation is still in progress (the PR marks it TODO). The exact package names, import paths, and API shapes have not yet been defined. The pattern below is illustrative of the intended developer experience, not a specification of the final API.
+In this scenario, both the client and the server explicitly use the third-party transport package. The session layer on both ends remains completely unaware of the transport being used.
 
+> **Note:** The SEP's reference implementation is still in progress. The pattern below is illustrative of the intended developer experience.
+
+**Client-Side:**
 ```python
-# Illustrative pseudocode — actual API shape TBD in the reference implementation
-
 # 1. Import the Core SDK
 from mcp.client.session import ClientSession
 # 2. Import a community-built transport plugin
@@ -50,6 +51,28 @@ async with ClientSession(transport) as session:
     # The session API is identical regardless of which transport is used
     result = await session.call_tool("get_weather", {"city": "Seattle"})
 ```
+
+**Server-Side:**
+```python
+from mcp.server import Server
+from <community_websocket_package> import WebSocketServerTransport
+
+app = Server("MyWeatherServer")
+
+# The server accepts the custom transport seamlessly
+transport = WebSocketServerTransport(port=8080)
+await app.connect(transport)
+```
+
+### Scenario B: Proxy Bridging
+
+Because SEP-2598 requires custom transports to publish a bidirectional mapping back to standard JSON-RPC, clients can use a custom transport to talk to a proxy, while the backend MCP server remains completely oblivious.
+
+1. **Client:** Connects via WebSockets or gRPC using the community transport plugin.
+2. **Translating Proxy / Gateway:** Terminates the custom connection, extracts the payload, maps it to standard JSON-RPC (if needed), and forwards it.
+3. **Standard MCP Server:** Receives standard `stdio` or HTTP traffic from the proxy process, completely unaware that the original client is using WebSockets.
+
+This proxy architecture is critical for cloud-native deployments, allowing enterprises to run standard, unmodified MCP servers behind advanced API gateways.
 
 ## Why this matters
 
