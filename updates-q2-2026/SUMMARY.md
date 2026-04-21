@@ -27,9 +27,60 @@ Added standard conventions for distributed tracing across MCP boundaries. Server
 
 To prevent unsolicited or rogue server actions, all server-initiated requests (such as `roots/list` and `sampling/createMessage`) **MUST** now be explicitly associated with an active client request context.
 
-### Tool Cache Optimization
+### Tool Cache Optimization (PR #2516)
 
-Servers are now recommended (`SHOULD`) to return tools from `tools/list` in a **deterministic order**. This seemingly small change drastically improves client-side caching efficiency and maximizes LLM prompt cache hit rates.
+Servers are now recommended (`SHOULD`) to return tools from `tools/list` in a **deterministic order**. This seemingly small change addresses a major inefficiency in how AI clients interface with LLMs:
+
+- **The Problem:** Historically, some servers returned their list of tools in a non-deterministic order (e.g., iterating over an unsorted hash map). When an AI client (like Claude) passed this list of tools in its system prompt to the LLM, the raw text of the prompt changed on every request because the tools were shuffled. 
+- **The Drawback:** This constant shuffling completely destroyed LLM Prompt Caching. Because the prompt text changed slightly, the LLM provider had to recompute the entire prompt from scratch on every turn, driving up latency and massively increasing API costs.
+- **The Solution:** By recommending (`SHOULD`) that servers return their tools in a deterministic order, clients can generate a stable system prompt. This maximizes cache hit rates on the LLM provider side, leading to significantly faster response times and lower costs for end-users. The spec does not mandate a specific ordering (e.g., alphabetical) — only that it be consistent across requests when the tool set hasn't changed.
+
+**Concrete Example of Deterministic Ordering:**
+Notice how the tools (`analyze_data`, `deploy_server`, `get_weather`) are returned in a predictable, alphabetical order to ensure the client's subsequent LLM prompt remains perfectly cacheable.
+
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": {
+    "tools": [
+      {
+        "name": "analyze_data",
+        "description": "Analyzes a dataset and returns summary statistics.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "data": { "type": "string" }
+          },
+          "required": ["data"]
+        }
+      },
+      {
+        "name": "deploy_server",
+        "description": "Deploys a new instance in the target region.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "region": { "type": "string" }
+          },
+          "required": ["region"]
+        }
+      },
+      {
+        "name": "get_weather",
+        "description": "Retrieves the current weather for a specific city.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "city": { "type": "string" }
+          },
+          "required": ["city"]
+        }
+      }
+    ]
+  }
+}
+```
 
 ### Schema Ergonomics
 
