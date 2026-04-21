@@ -159,3 +159,25 @@ _(Note: `TGluZTEKTGluZTI=` is the base64 encoding of `"Line1\nLine2"`)_
 ## Why this matters
 
 This standardization is crucial for enterprise deployments. By lifting routing data out of the JSON body and into HTTP headers, standard network infrastructure can now natively route, rate-limit, and monitor MCP traffic using existing, highly optimized tooling without needing to parse complex JSON payloads on every request.
+
+## Challenges for Existing Servers
+
+Implementing this SEP introduces several operational and architectural challenges:
+
+1. **The Validation Burden:** The most significant breaking change is the strict validation mandate. Existing servers must add middleware to intercept the HTTP request, parse both headers and JSON, and perform a deep comparison before execution. Failure to implement this correctly exposes the server to the Header Mismatch Attacks described above.
+2. **Unwrapping Encoded Headers:** While every major programming language natively supports Base64 decoding, standard HTTP frameworks (like Express, FastAPI, or Spring) treat incoming headers as plain strings. They will not automatically recognize or unwrap the custom `=?base64?...?=` wrapper format specified by SEP-2243. This encoding is strictly necessary because raw HTTP headers cannot contain newlines (which would break the HTTP protocol and cause Header Injection vulnerabilities) and traditionally struggle with raw Unicode. Therefore, server authors or SDK maintainers must write custom middleware to manually detect this wrapper (e.g., checking if the header string starts with `=?base64?`), slice out the inner payload, and *then* pass it to the language's standard Base64 decoder before validating it against the JSON body.
+3. **Protocol Agnosticism vs. HTTP Coupling:** MCP is designed to be transport-agnostic (supporting both HTTP and local `stdio`). The `x-mcp-header` annotation in a tool's `inputSchema` is HTTP-specific metadata — on stdio transports, clients simply ignore it and pass parameters normally in the JSON body. The tool schema itself remains transport-neutral, but server authors should be aware that the header-based routing benefits only apply to HTTP deployments.
+
+## The Asynchronous Upgrade Path
+
+Because MCP involves independent actors (Clients, Servers, and Network Intermediaries), rolling out this SEP requires a phased, asynchronous approach:
+
+### Phase 1: Client Updates (Defensive Rollout)
+Clients must be updated first. Updated MCP SDKs automatically extract `method` and `name` to append the mandatory `Mcp-Method` and `Mcp-Name` headers. Older servers will simply ignore these unknown headers and continue processing the JSON body, ensuring backward compatibility.
+
+### Phase 2: Server "Opt-In" (The Friction Point)
+Servers begin adopting the new SDK middleware to handle validation and start utilizing `x-mcp-header` in their schemas.
+*Note:* Older clients that do not support `x-mcp-header` will still function — they simply won't send the custom headers, so the routing benefits are lost. However, if the server's validation middleware strictly enforces custom header presence without checking the client's protocol version, it could reject requests from older clients with a `400 Bad Request`. Server authors should ensure validation accounts for protocol version negotiation.
+
+### Phase 3: Infrastructure Updates
+Once both clients and internal servers support the headers, DevOps teams can update API Gateways and Load Balancers. Routing rules can now be based entirely on `Mcp-Name` and `Mcp-Param-*` headers, allowing enterprises to turn off deep packet inspection and dramatically improve network throughput.
