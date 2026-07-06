@@ -22,6 +22,38 @@ Instead of negotiating the protocol version and capabilities once at startup, th
 * **Protocol Version:** Passed via the `MCP-Protocol-Version` HTTP header and the `io.modelcontextprotocol/protocolVersion` field in `_meta` (both MUST match). Version negotiation happens organically through `UnsupportedProtocolVersionError` responses.
 * **Client Capabilities:** Passed via the `io.modelcontextprotocol/clientCapabilities` field in `_meta` on a per-request basis. Clients MUST also include `io.modelcontextprotocol/clientInfo` on every request.
 
+#### What moves to HTTP headers (and what deliberately doesn't)
+
+A natural question once sessions are gone: *"with no `Mcp-Session-Id`, what gets elevated to HTTP headers instead?"* The counterintuitive answer is that statelessness pushes data **into the request body, not into headers.** Everything that used to be negotiated once and remembered server-side now rides in the body's `_meta` on **every** request:
+
+```jsonc
+"_meta": {
+  "io.modelcontextprotocol/protocolVersion":   "2026-07-28",              // required, every request
+  "io.modelcontextprotocol/clientInfo":         { "name": "...", "version": "..." },  // required
+  "io.modelcontextprotocol/clientCapabilities": { /* ... */ },            // required, per request
+  "io.modelcontextprotocol/logLevel":           "info"                     // optional; replaces logging/setLevel
+}
+```
+
+`_meta` is the source of truth. HTTP headers only **mirror a small subset**, and they exist for exactly one reason the transport spec states outright: so *intermediaries (load balancers, gateways, observability tools) can route and apply policy without parsing the JSON body.*
+
+| Header | Mirrors (body field) | Status | Why it's a header |
+|--------|----------------------|--------|-------------------|
+| ~~`Mcp-Session-Id`~~ | — | **Removed** (SEP-2567) | The whole point — no sessions, so no routing-by-session. |
+| `MCP-Protocol-Version` | `_meta.…/protocolVersion` | **Mandatory** | Gateways can version-gate/reject without reading the body. MUST match the `_meta` value or the server returns `400` + `HeaderMismatch`. |
+| `Mcp-Method` | `method` | **Required**, all requests (SEP-2243) | Route / rate-limit by operation. |
+| `Mcp-Name` | `params.name` or `params.uri` | **Required** for `tools/call`, `resources/read`, `prompts/get` (SEP-2243) | The routing key that **replaces `Mcp-Session-Id`**. |
+| `Mcp-Param-{name}` | a specific tool argument | **Optional**, server-declared via `x-mcp-header` (SEP-2243) | Route by tenant/region/etc. pulled from arguments. |
+| `Mcp-Name: <taskId>` | `params.taskId` | For the Tasks flow (SEP-2663) | Recovers instance-affinity for the *genuinely* stateful case. |
+
+(`Origin`, `Accept`, `X-Accel-Buffering` are still present, but those are ordinary HTTP transport mechanics, not MCP protocol state.)
+
+**The conceptual shift.** In the old model, `Mcp-Session-Id` was *both* the gateway routing key *and* a pointer to state the server held in memory — it had to be a header because intermediaries routed on it. In the new model there is no implicit server-side state to point at, so nothing needs a session header. What gets "elevated" to headers is only the minimum an intermediary needs to make a routing/policy decision from the outside — *what version, what method, what name/target, which routing-relevant argument* — and each is a **mirror** of an authoritative body field, kept honest by the mandatory header↔body match (SEP-2243).
+
+So `Mcp-Name` is the spiritual successor to `Mcp-Session-Id` as the gateway routing key — but it's derived from *what you're calling* (tool name, resource URI, or a `taskId`) rather than an opaque connection token. For the two cases where instance-affinity genuinely matters, the key is now **explicit**: the `taskId` (Tasks, SEP-2663) or an app-level state handle threaded through tool arguments (SEP-2567) — never a hidden session.
+
+> **Still in flux:** SEP-2575 flags an open design question ("What belongs in `_meta` vs. a top-level protocol field?"). The authors note that piling `protocolVersion`/`clientInfo`/`clientCapabilities`/`logLevel` into `_meta` risks overloading it, and that a required field like `protocolVersion` *might* eventually be promoted to a top-level field or header. The exact body-vs-header split isn't fully settled in the draft.
+
 ### 2. The `server/discover` RPC (The "Look Before You Leap" Path)
 A common question regarding per-request capabilities is: *"Doesn't this mean the client is flying blind and won't know what the server supports before calling a tool?"*
 

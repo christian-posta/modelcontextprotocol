@@ -1,159 +1,148 @@
-# MCP Protocol and Specification Updates (Since Nov 2025 Release)
+# MCP Protocol & Specification Updates — Q2 2026 Draft/RC
 
-The upcoming release of the Model Context Protocol (MCP) introduces significant enhancements aimed at extending protocol capabilities, formalizing HTTP transport behaviors, improving client-server synchronization, and strengthening authorization flows. Below is a comprehensive summary of the updates going into the next release.
+This summarizes the changes going into the next MCP release, as reflected in the officially
+published **draft** at <https://modelcontextprotocol.io/specification/draft> (protocol version
+**`2026-07-28`**). The authoritative "Key Changes" list is the spec's own
+[`changelog.mdx`](https://modelcontextprotocol.io/specification/draft/changelog).
 
-All SEPs are here: 
+All SEPs: <https://modelcontextprotocol.io/seps> · Release plan: <https://plan.modelcontextprotocol.io>
 
-https://modelcontextprotocol.io/seps
+> **Reading note.** This draft is a *major architectural overhaul*, not an incremental feature drop.
+> Three mega-SEPs — **Stateless (2575)**, **MRTR (2322)**, and **Tasks-as-Extension (2663)** — reshape
+> the rest. The overarching theme is *make every request self-contained and independently routable, and
+> prune the surface area that prevented that* (sessions, the init handshake, server→client callbacks,
+> SSE resumability, roots/sampling/logging).
 
-The MCP release plan with relevant SEPs is here:
+Each item below links to a dedicated note file with before→after detail.
 
-https://plan.modelcontextprotocol.io
+---
 
-## 1. Core Protocol & Schema Additions
+## 🔴 Biggest changes (architectural / breaking — read these first)
 
-### Extensions Framework (SEP-2133)
+### 1. Make MCP Stateless (SEP-2575) — `SEP-2575-Stateless-MCP.md`
+Removes the `initialize` / `notifications/initialized` handshake. Every request now carries its own
+`io.modelcontextprotocol/protocolVersion`, `clientInfo`, and `clientCapabilities` in `_meta`. Adds the
+mandatory **`server/discover`** RPC for up-front capability/version discovery, replaces the HTTP GET
+endpoint + `resources/subscribe`/`unsubscribe` with a single **`subscriptions/listen`** stream, removes
+`ping`, `logging/setLevel`, and `notifications/roots/list_changed`, and drops SSE resumability
+(`Last-Event-ID`). Version mismatch → `UnsupportedProtocolVersionError`.
 
-The protocol now natively supports custom vendor configurations. The `ClientCapabilities` and `ServerCapabilities` schemas include a new `extensions` field (typed as `JSONObject`). This allows for safe, forward-compatible capability experimentation without modifying core schema strictness.
+### 2. Sessionless MCP via Explicit State Handles (SEP-2567) — `SEP-2567-Sessionless-MCP.md`
+Removes the `Mcp-Session-Id` header and all session-lifecycle language. List endpoints no longer vary
+per connection (making them cacheable — see TTL below). Cross-call state moves to explicit, server-minted
+handles threaded through tool arguments (a documented pattern, not a wire primitive).
 
-### MCP Apps - Interactive UIs (SEP-1865)
+### 3. Multi Round-Trip Requests / MRTR (SEP-2322) — `SEP-2322-MRTR.md` *(was missing from prior review)*
+Replaces all **server-initiated requests** (sampling / elicitation / roots callbacks). Instead of calling
+back to the client, a server returns an `InputRequiredResult` (`resultType: "input_required"`) listing
+what it needs; the client fulfills it and **retries the original request** with `inputResponses` + an
+opaque `requestState`. Also adds a **required `resultType` discriminator on every result**
+(`"complete"` | `"input_required"` | `"task"`). This is what makes stateless/sessionless actually work.
 
-The specification introduces **MCP Apps**, enabling servers to deliver interactive frontend user interfaces directly within compatible MCP clients. This significantly broadens how users interact with server resources beyond text and basic prompts.
+### 4. Tasks moved to an Official Extension (SEP-2663) — `SEP-2663-Tasks-Extension.md` *(was missing)*
+Pulls the experimental Tasks feature out of core and republishes it as extension
+`io.modelcontextprotocol/tasks`, redesigned for the sessionless world: server-directed (server mints
+`taskId`), polling via `tasks/get`, new `tasks/update`, removed `tasks/result`/`tasks/list`/`tasks/delete`,
+dedicated `tasks/cancel`, 5 states, `ttlMs`/`pollIntervalMs`.
 
-### HTTP Transport Standardization (SEP-2243)
+### 5. Deprecate Roots, Sampling, and Logging (SEP-2577) — `SEP-2577-Deprecate-Roots-Sampling-Logging.md` *(was filed as "pending"; it landed)*
+Marks all three features `@deprecated` (non-breaking; 12-month support window per SEP-2596). These were
+the highest-complexity / lowest-adoption features and the source of the server→client callback surface
+MRTR had to work around. Migrations: tool params/resource URIs (Roots), direct LLM APIs (Sampling),
+stderr/OTel (Logging).
 
-Standardization of the Streamable HTTP transport has been formalized:
+---
 
-- **Required Headers:** `Mcp-Method` and `Mcp-Name` are now required on Streamable HTTP POST requests.
-- **Custom Headers:** Introduced the `x-mcp-header` prefix, allowing servers to declare custom HTTP headers that clients should populate dynamically based on tool parameters.
+## 🟠 Medium changes
 
-### OpenTelemetry Trace Context (SEP-414)
+### HTTP Transport Standardization (SEP-2243) — `SEP-2243-HTTP-Headers.md` — **now Status: Final**
+Required `Mcp-Method` / `Mcp-Name` headers on Streamable HTTP POSTs; custom `x-mcp-header` routing headers.
+**Correction to the existing note:** `x-mcp-header` now applies to `integer`/`string`/`boolean` (**not
+`number`**), MAY appear at any nesting depth, and the header-mismatch error code changed `-32001` →
+`-32020` (see `Error-Code-Allocation-Renumbering.md`).
 
-Added standard conventions for distributed tracing across MCP boundaries. Servers and clients can now propagate OpenTelemetry context using `_meta` request parameters (`traceparent`, `tracestate`, `baggage`), enabling robust observability.
+### JSON Schema 2020-12 for Tool Schemas (SEP-2106) — `SEP-2106-JSON-Schema-2020-12.md` *(was missing)*
+`inputSchema` allows full 2020-12 (composition/`$ref`), `outputSchema` no longer requires `type:"object"`
+(arrays/primitives allowed), and `structuredContent` widens from object to `unknown`. Adds `$ref`/no-network
+and composition-bounds guardrails.
 
-### Server Request Association (SEP-2260)
+### TTL for List Results (SEP-2549) — `SEP-2549-TTL-List-Results.md` *(was filed as "pending"; it landed)*
+New `CacheableResult` with required `ttlMs` + `cacheScope` (`public`/`private`) on `tools/list`,
+`prompts/list`, `resources/list`, `resources/read`, `resources/templates/list`, `server/discover`.
+Transport-agnostic freshness hint that complements `listChanged`.
 
-To prevent unsolicited or rogue server actions, all server-initiated requests (such as `roots/list` and `sampling/createMessage`) **MUST** now be explicitly associated with an active client request context.
+### Feature Lifecycle & Deprecation Policy (SEP-2596) — `SEP-2596-Feature-Lifecycle-Deprecation.md` *(was "pending"; landed)*
+Formal Active → Deprecated → Removed states, 12-month minimum window, deprecated-features registry.
+Also reclassifies the HTTP+SSE transport and `includeContext: "thisServer"/"allServers"` as Deprecated.
 
-### Tool Cache Optimization (PR #2516)
+### Extensions Framework (SEP-2133) — `SEP-2133-Extensions.md`
+`extensions` field on Client/ServerCapabilities for forward-compatible capability experimentation. Keys
+now MUST use a reverse-DNS prefix. This is the mechanism Tasks (2663) now rides on.
 
-Servers are now recommended (`SHOULD`) to return tools from `tools/list` in a **deterministic order**. This seemingly small change addresses a major inefficiency in how AI clients interface with LLMs:
+### Deterministic `tools/list` Ordering (PR #2516)
+Servers SHOULD return tools in a stable order so clients can keep LLM prompts cacheable (prompt-cache
+hit rates). Covered in the original summary's "Tool Cache Optimization" section.
 
-- **The Problem:** Historically, some servers returned their list of tools in a non-deterministic order (e.g., iterating over an unsorted hash map). When an AI client (like Claude) passed this list of tools in its system prompt to the LLM, the raw text of the prompt changed on every request because the tools were shuffled. 
-- **The Drawback:** This constant shuffling completely destroyed LLM Prompt Caching. Because the prompt text changed slightly, the LLM provider had to recompute the entire prompt from scratch on every turn, driving up latency and massively increasing API costs.
-- **The Solution:** By recommending (`SHOULD`) that servers return their tools in a deterministic order, clients can generate a stable system prompt. This maximizes cache hit rates on the LLM provider side, leading to significantly faster response times and lower costs for end-users. The spec does not mandate a specific ordering (e.g., alphabetical) — only that it be consistent across requests when the tool set hasn't changed.
+---
 
-**Concrete Example of Deterministic Ordering:**
-Notice how the tools (`analyze_data`, `deploy_server`, `get_weather`) are returned in a predictable, alphabetical order to ensure the client's subsequent LLM prompt remains perfectly cacheable.
+## 🟢 Smaller changes
 
-```json
-{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "result": {
-    "tools": [
-      {
-        "name": "analyze_data",
-        "description": "Analyzes a dataset and returns summary statistics.",
-        "inputSchema": {
-          "type": "object",
-          "properties": {
-            "data": { "type": "string" }
-          },
-          "required": ["data"]
-        }
-      },
-      {
-        "name": "deploy_server",
-        "description": "Deploys a new instance in the target region.",
-        "inputSchema": {
-          "type": "object",
-          "properties": {
-            "region": { "type": "string" }
-          },
-          "required": ["region"]
-        }
-      },
-      {
-        "name": "get_weather",
-        "description": "Retrieves the current weather for a specific city.",
-        "inputSchema": {
-          "type": "object",
-          "properties": {
-            "city": { "type": "string" }
-          },
-          "required": ["city"]
-        }
-      }
-    ]
-  }
-}
-```
+### Authorization & security
+- **Issuer (`iss`) claim (SEP-2468)** — `SEP-2468-Issuer-Claim.md` *(was "pending"; landed)*. AS SHOULD
+  return `iss` (RFC 9207); client MUST validate it — anti-mix-up for multi-AS.
+- **DCR deprecated → Client ID Metadata Documents (PR #2858)** — `DCR-Deprecation-CIMD.md` *(was missing)*.
+  CIMD (HTTPS-URL `client_id`) is now preferred; DCR is the compatibility fallback.
+- **Multi-AS Migration (SEP-2352)** — `SEP-2352-Multi-AS-Migration.md`. Credentials keyed by issuer;
+  re-register on AS change. *(Landed as spec text, no standalone `seps/` file.)*
+- **Client Application Types (SEP-837)** — `SEP-837-Client-Application-Types.md`. `application_type`
+  required in DCR (moot once a client moves to CIMD).
+- **Step-Up Authorization (SEP-2350)** — `SEP-2350-Step-Up-Auth.md`. *(Landed as spec text in the draft
+  authorization docs, no standalone `seps/` file.)*
+- **Refresh Tokens (SEP-2207)** — `SEP-2207-Refresh-Tokens.md`. OIDC refresh-token guidance.
 
-### Schema Ergonomics
+### Errors & schema hygiene
+- **Resource-Not-Found error code (SEP-2164)** — `SEP-2164-Resource-Not-Found-Error.md` *(was missing)*.
+  `-32002` → `-32602` (Invalid Params); no more empty-`contents` ambiguity.
+- **Error-code allocation & renumbering** — `Error-Code-Allocation-Renumbering.md` *(was missing)*.
+  `-32000`..`-32019` implementation-defined, `-32020`..`-32099` reserved for MCP; `HeaderMismatch -32020`,
+  `MissingRequiredClientCapability -32021`, `UnsupportedProtocolVersion -32022`.
 
-- **Task TTL:** Updated the generated JSON schema to explicitly allow `ttl: null` for Tasks to signify unlimited execution time, fixing strict-validation failures.
-- **Sampling with Tools (SEP-1577):** Refined the sampling specification to support tool use within sampling requests. [NOTE: Originally referenced as "SEP-531" which does not exist; corrected to SEP-1577.]
+### Observability & request association
+- **OpenTelemetry Trace Context (SEP-414)** — `SEP-414-Trace-Context.md`. `traceparent`/`tracestate`/
+  `baggage` in `_meta` (DNS-prefix exception).
+- **Server Request Association (SEP-2260)** — `SEP-2260-Server-Request-Association.md`. Server requests
+  MUST be tied to a client request. *(Now largely subsumed/tightened by MRTR (2322) in practice.)*
 
-## 2. Authorization & Security Enhancements
+### Elicitation
+- **Form-mode scope clarification** — the strict `MUST NOT` on sensitive data is limited to credentials/
+  tokens (passwords, API keys, payment data); general PII is left to server discretion. Also note MRTR
+  **removed** `notifications/elicitation/complete` and the `elicitationId` field.
 
-### Refresh Token Workflows (SEP-2207)
+---
 
-Added comprehensive guidance on implementing OIDC-flavored refresh token lifecycles, ensuring reliable long-lived connections for clients using robust identity providers.
+## ⚙️ Governance & process (landed)
+- **PR-based SEP workflow (SEP-1850)**, **Contributor Ladder (SEP-2148)**, **Working Groups Charter
+  (SEP-2149)**, **Succession & Amendment (SEP-2085)**, **SDK Tiering (SEP-1730)**.
+- **Conformance tests required for Final SEPs (SEP-2484)** *(was "pending"; merged)* — Standards-Track
+  SEPs need conformance tests before reaching Final.
 
-### Step-up Authorization & Scope Accumulation (SEP-2350)
+---
 
-Resolved ambiguity in multi-step authorization scenarios. The spec clarifies how clients should accumulate minimal required scopes on the client side and defines the behavior for token challenges relying on hierarchical scopes.
+## ⛔ Did NOT land (adjust expectations)
+- **Pluggable Transports (SEP-2598)** — `SEP-2598-Pluggable-Transports.md`. **Not merged anywhere** on
+  upstream `main` (no `seps/` file, no schema/doc reference). The stateless + `subscriptions/listen` work
+  (2575) reshaped the transport story instead. Treat this note as speculative / not adopted.
+- Still-open candidates *not* in this draft (re-check each PR's status): 2614 keywords, 2571 resource
+  submission, 2564 server-side list filtering, 2557 adapt-tasks, 2532 resource streaming, 2495 event-driven
+  tools, 2487 `execution.requirements`, 2433 transfer descriptors, 2419 `cache_hint`, 2417 model
+  preferences, 2448 telemetry.
 
-### Multi-Authorization Server Migration (SEP-2352)
+---
 
-Added guidance for clients handling multi-AS behavior. It explicitly addresses how client credentials should be bound to specific authorization servers and provides safe practices for migration and token isolation.
-
-### Client Application Types (SEP-837)
-
-Strengthened `application_type` definitions during OIDC registration flows. The spec now dictates that locally-hosted web applications (accessed via `localhost`) **SHOULD** use `application_type: "native"`, whereas `"web"` is reserved for remote browser-based applications. Clients **MUST** specify an appropriate `application_type` during Dynamic Client Registration.
-
-### Form-Mode Elicitation Scope
-
-Clarified security constraints around "sensitive information" in Elicitation. The spec explicitly limits the strict `MUST NOT` directive to access credentials and tokens (passwords, API keys, payment data), leaving the collection of general PII up to the server's discretion.
-
-## 3. Governance and Community Process Updates
-
-While not strictly protocol technicalities, major structural improvements were merged to support ecosystem scaling:
-
-- **PR-Based SEP Workflow (SEP-1850):** The Specification Enhancement Proposal process was completely migrated from GitHub issues to a traceable Pull Request model in a dedicated `seps/` directory.
-- **Contributor Ladder (SEP-2148):** Established formal roles, advancement criteria, and decision delegation paths (from Contributor to Lead Core Maintainer).
-- **Working Groups Charter (SEP-2149):** Defined a standardized template and governance rules for forming Working Groups and Interest Groups.
-- **Succession & Amendment (SEP-2085):** Added formal procedures for protocol amendments and leadership succession.
-- **SDK Tiering System:** The documentation site now ranks official and community SDKs in a Tiered assessment system (Tier 1-3) to convey readiness and capability support clearly.
-# Draft/Pending SEPs (Upcoming Candidates)
-
-The following SEPs are currently open Pull Requests and may be considered for the upcoming release or future releases. They are currently under discussion or review:
-
-## Protocol & Architecture Overhauls
-
-- **SEP-2575: Make MCP Stateless** - Proposes removing stateful connections in favor of a stateless protocol.
-- **SEP-2567: Sessionless MCP via Explicit State Handles** - Proposes sessionless operations using explicit state handles.
-- **SEP-2598: Pluggable Transports** - Enhancements to how transports are defined and plugged into the protocol.
-
-## Features & Capabilities
-
-- **SEP-2614: Add optional keywords field to Implementation for server routing** - Improves server routing and discovery by adding a keywords array to the Implementation metadata.
-- **SEP-2571: Resource Submission** - Client-to-server resource creation to improve agent coordination.
-- **SEP-2564: Server-Side Filtering for List Methods** - Adds native filtering capabilities to `list` requests (e.g., `tools/list`, `resources/list`) to avoid transferring massive lists over the network.
-- **SEP-2557: Adapt Tasks for Stateless & Sessionless Protocol** - Adjustments to the Tasks primitive to operate safely in sessionless/stateless environments.
-- **SEP-2549: TTL for List Results** - Introduces Time-To-Live fields for list results to allow clients to better cache lists.
-- **SEP-2532: Resource Streaming for Binary Content Delivery** - Native streaming primitives for large binary resources (like images or large files).
-- **SEP-2495: Event-Driven Tool Invocation** - Allows servers to push events that trigger LLM re-entry, turning tool invocation from purely client-driven to server-initiated.
-- **SEP-2487: Add execution.requirements field to Tool** - Adds a field to explicitly define tool preconditions before a client attempts execution.
-- **SEP-2433: Transfer Descriptors** - Support for Out-of-Band Data Transfer Negotiation.
-- **SEP-2419: cache_hint well-known key** - Adds caching hints to `CallToolResult._meta` to improve LLM caching strategies.
-- **SEP-2417: Model Preferences for Tools** - Allows tools to declare preferences for specific model types or characteristics.
-
-## Telemetry, Auth & Lifecycle
-
-- **SEP-2596: Specification Feature Lifecycle and Deprecation Policy** - Formalizes how features are added, matured, and deprecated within the spec.
-- **SEP-2577: Deprecate Roots, Sampling, and Logging** - A proposal to deprecate several current protocol primitives.
-- **SEP-2484: Require Conformance Tests for Standards Track SEPs** - Enforces conformance testing requirements for SEPs before they can reach "Final" status.
-- **SEP-2468: Recommend Issuer (iss) Claim in MCP Auth Responses** - Updates auth guidance to recommend the OIDC `iss` claim.
-- **SEP-2448: MCP server execution telemetry** - Extends telemetry capabilities for server execution.
+## Quick landed/missed ledger (vs. the original review)
+| Bucket | Items |
+|--------|-------|
+| Tracked & correct | 2575, 2567, 2243, 2133, 414, 2260, 2350, 2352, 837, 2207, tool ordering, governance |
+| Filed "pending" → actually landed | **2549, 2577, 2596, 2468, 2484** |
+| Missing entirely → new notes added | **2322 (MRTR), 2663 (Tasks ext), 2106, 2164, error renumbering, DCR→CIMD** |
+| Effort spent but did NOT land | **2598 (Pluggable Transports)** |
